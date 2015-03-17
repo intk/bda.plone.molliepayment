@@ -12,6 +12,13 @@
 
   <browser:page
     for="*"
+    name="mollie_webhook"
+    class=".MollieWebhook"
+    permission="zope2.View"
+  />
+
+  <browser:page
+    for="*"
     name="mollie_payment_finalized"
     template="finalized.pt"
     class=".MolliePayFinalized"

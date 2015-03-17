@@ -96,6 +96,7 @@ class MolliePay(BrowserView):
                 'amount':real_amount, 
                 'description':'My first API payment', 
                 'redirectUrl':order_redirect_url, 
+                'webhookUrl': '%s/@@mollie_webhook' %(base_url),
                 'metadata':{'order_nr':ordernumber}, 
                 'method': 'ideal', 
                 'issuer': bank_id
@@ -134,6 +135,16 @@ class MolliePaySuccess(BrowserView):
     def shopmaster_mail(self):
         return shopmaster_mail(self.context)
  
+
+class MollieWebhook(BrowserView):
+    def __call__(self):
+        print "Webhook called"
+        data = self.request.form
+        print data
+
+        return True
+
+
 #
 # Payment finalized
 #
