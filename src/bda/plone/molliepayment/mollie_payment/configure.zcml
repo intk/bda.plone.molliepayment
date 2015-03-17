@@ -1,0 +1,45 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:browser="http://namespaces.zope.org/browser">
+
+  <adapter name="mollie_payment" factory=".MolliePayment" />
+  
+  <browser:page
+    for="*"
+    name="mollie_payment"
+    class=".MolliePay"
+    permission="zope2.View"
+  />
+
+  <browser:page
+    for="*"
+    name="mollie_payment_finalized"
+    template="finalized.pt"
+    class=".MolliePayFinalized"
+    permission="zope2.View"
+  />
+
+  <browser:page
+    for="*"
+    name="mollie_payment_success"
+    template="success.pt"
+    class=".MolliePaySuccess"
+    permission="zope2.View"
+  />
+  
+  <browser:page
+    for="*"
+    name="mollie_payment_failed"
+    template="failed.pt"
+    class=".MolliePayFailed"
+    permission="zope2.View"
+  />
+
+  <browser:page
+    for="*"
+    name="mollie_payment_aborted"
+    template="aborted.pt"
+    class=".MolliePayFailed"
+    permission="zope2.View"
+  />
+
+</configure>
