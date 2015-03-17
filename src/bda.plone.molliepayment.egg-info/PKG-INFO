@@ -1,0 +1,15 @@
+Metadata-Version: 1.1
+Name: bda.plone.molliepayment
+Version: 0.1
+Summary: Mollie Payment processor for bda.plone.shop
+Home-page: UNKNOWN
+Author: Andre Goncalves
+Author-email: andre@intk.com
+License: GNU General Public Licence
+Description: UNKNOWN
+Platform: UNKNOWN
+Classifier: Environment :: Web Environment
+Classifier: License :: OSI Approved :: GNU General Public License (GPL)
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python
+Classifier: Topic :: Internet :: WWW/HTTP :: Dynamic Content

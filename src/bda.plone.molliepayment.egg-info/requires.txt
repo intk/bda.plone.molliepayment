@@ -1,0 +1,6 @@
+setuptools
+Plone
+bda.plone.shop
+
+[test]
+plone.app.testing
