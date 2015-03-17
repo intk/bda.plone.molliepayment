@@ -57,7 +57,7 @@ def shopmaster_mail(context):
 def get_banks():
     mollie = Mollie.API.Client()
     mollie.setApiKey(API_KEY)
-    
+
     issuers = mollie.issuers.all()
     list_ideal_issuers = []
 
@@ -96,7 +96,10 @@ class MolliePay(BrowserView):
 
         try:
             mollie = Mollie.API.Client()
-            mollie.setApiKey(API_KEY)
+            if payment_type == 'creditcard':
+                mollie.setApiKey(TEST_API_KEY)
+            else:
+                mollie.setApiKey(API_KEY)
 
             order_redirect_url = '%s/@@mollie_payment_success?order_id=%s' %(base_url, ordernumber)
 
