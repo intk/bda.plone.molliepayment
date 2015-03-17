@@ -39,9 +39,14 @@ _ = MessageFactory('bda.plone.payment')
 # Mollie Data
 #
 
+testing = False
+
 TEST_API_KEY = "test_aUZkTbRsiUcDnjSX4D7AqvxTp5TKJP"
 LIVE_API_KEY = "live_BndGVkfjTnHuijrMPeKjnpGgV4rL7n"
 
+API_KEY = LIVE_API_KEY
+if testing:
+    API_KEY = TEST_API_KEY
 #
 # Util functions
 #
@@ -51,7 +56,7 @@ def shopmaster_mail(context):
 
 def get_banks():
     mollie = Mollie.API.Client()
-    mollie.setApiKey(TEST_API_KEY)
+    mollie.setApiKey(API_KEY)
     issuers = mollie.issuers.all()
     list_ideal_issuers = []
 
@@ -65,8 +70,8 @@ class MolliePayment(Payment):
     pid = 'mollie_payment'
     label = _('mollie_payment', 'Mollie Payment')
 
-    def init_url(self, uid, bank_id):
-        return '%s/@@mollie_payment?uid=%s&bank_id=%s' % (self.context.absolute_url(), uid, bank_id)
+    def init_url(self, uid, bank_id, payment_type):
+        return '%s/@@mollie_payment?uid=%s&bank_id=%s&payment=%s' % (self.context.absolute_url(), uid, bank_id, payment_type)
 
 # 
 # Mollie implementation
@@ -76,6 +81,7 @@ class MolliePay(BrowserView):
         base_url = self.context.absolute_url()
         order_uid = self.request['uid']
         bank_id = self.request['bank_id']
+        payment_type = self.request['payment']
 
         data = IPaymentData(self.context).data(order_uid)
         amount = data["amount"]
@@ -83,20 +89,34 @@ class MolliePay(BrowserView):
         
         real_amount = float(int(amount)/100.0)
 
+        webhookUrl = '%s/@@mollie_webhook' %(base_url)
+        if testing:
+            webhookUrl = ""
+
         try:
             mollie = Mollie.API.Client()
-            mollie.setApiKey(TEST_API_KEY)
+            mollie.setApiKey(API_KEY)
             order_redirect_url = '%s/@@mollie_payment_success?order_id=%s' %(base_url, ordernumber)
 
-            payment = mollie.payments.create({
-                'amount':real_amount, 
-                'description':'My first API payment', 
-                'redirectUrl':order_redirect_url, 
-                'webhookUrl': '%s/@@mollie_webhook' %(base_url),
-                'metadata':{'order_nr':ordernumber}, 
-                'method': 'ideal', 
-                'issuer': bank_id
-            })
+            if payment_type == 'creditcard':
+                payment = mollie.payments.create({
+                    'amount':real_amount, 
+                    'description':str(ordernumber), 
+                    'redirectUrl':order_redirect_url, 
+                    'metadata':{'order_nr':ordernumber}, 
+                    'webhookUrl': webhookUrl,
+                    'method': payment_type
+                })
+            else:
+                payment = mollie.payments.create({
+                    'amount':real_amount, 
+                    'description':str(ordernumber), 
+                    'redirectUrl':order_redirect_url, 
+                    'metadata':{'order_nr':ordernumber}, 
+                    'webhookUrl': webhookUrl,
+                    'method': payment_type, 
+                    'issuer': bank_id
+                })
 
             redirect_url = payment.getPaymentUrl()
         except Exception, e:
@@ -113,10 +133,8 @@ class MolliePaySuccess(BrowserView):
         data = self.request.form
 
         mollie = Mollie.API.Client()
-        mollie.setApiKey(TEST_API_KEY)
+        mollie.setApiKey(API_KEY)
 
-        #payment_id = data['id']
-        #mollie_payment = mollie.payments.get(payment_id)
         order_nr = data['order_id']
 
         payment = Payments(self.context).get('mollie_payment')
@@ -143,7 +161,7 @@ class MollieWebhook(BrowserView):
             return False
 
         mollie = Mollie.API.Client()
-        mollie.setApiKey(LIVE_API_KEY)
+        mollie.setApiKey(API_KEY)
 
         payment_id = data['id']
         mollie_payment = mollie.payments.get(payment_id)
