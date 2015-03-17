@@ -40,6 +40,7 @@ _ = MessageFactory('bda.plone.payment')
 #
 
 TEST_API_KEY = "test_aUZkTbRsiUcDnjSX4D7AqvxTp5TKJP"
+LIVE_API_KEY = "live_BndGVkfjTnHuijrMPeKjnpGgV4rL7n"
 
 #
 # Util functions
@@ -53,8 +54,6 @@ def get_banks():
     mollie.setApiKey(TEST_API_KEY)
     issuers = mollie.issuers.all()
     list_ideal_issuers = []
-
-    print issuers
 
     for issuer in issuers:
         if issuer['method'] == Mollie.API.Object.Method.IDEAL:
@@ -83,9 +82,6 @@ class MolliePay(BrowserView):
         ordernumber = data["ordernumber"]
         
         real_amount = float(int(amount)/100.0)
-
-        print real_amount
-        print bank_id
 
         try:
             mollie = Mollie.API.Client()
@@ -130,7 +126,6 @@ class MolliePaySuccess(BrowserView):
         order = OrderData(self.context, uid=order_uid)
         
         if order.salaried == ifaces.SALARIED_YES:
-            print "Paid!"
             return True
         else:
             return False
@@ -142,7 +137,6 @@ class MolliePaySuccess(BrowserView):
 
 class MollieWebhook(BrowserView):
     def __call__(self):
-        print "Webhook called"
         data = self.request.form
         
         if 'id' not in data:
@@ -159,7 +153,6 @@ class MollieWebhook(BrowserView):
         order_uid = IPaymentData(self.context).uid_for(order_nr)
 
         if mollie_payment.isPaid():
-            print "Is Paid!"
             payment.succeed(self.context, order_uid)
             order = OrderData(self.context, uid=order_uid)
             order.salaried = ifaces.SALARIED_YES
@@ -168,7 +161,6 @@ class MollieWebhook(BrowserView):
         elif mollie_payment.isOpen():
             return False
         else:
-            print "Failed"
             payment.failed(self.context, order_uid)
             return False
 
