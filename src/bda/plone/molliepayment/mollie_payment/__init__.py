@@ -143,7 +143,7 @@ class MollieWebhook(BrowserView):
             return False
 
         mollie = Mollie.API.Client()
-        mollie.setApiKey(TEST_API_KEY)
+        mollie.setApiKey(LIVE_API_KEY)
 
         payment_id = data['id']
         mollie_payment = mollie.payments.get(payment_id)
