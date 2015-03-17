@@ -96,10 +96,7 @@ class MolliePay(BrowserView):
 
         try:
             mollie = Mollie.API.Client()
-            if payment_type == 'creditcard':
-                mollie.setApiKey(TEST_API_KEY)
-            else:
-                mollie.setApiKey(API_KEY)
+            mollie.setApiKey(API_KEY)
 
             order_redirect_url = '%s/@@mollie_payment_success?order_id=%s' %(base_url, ordernumber)
 
