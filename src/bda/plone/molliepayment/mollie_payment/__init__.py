@@ -151,10 +151,10 @@ class MollieWebhook(BrowserView):
 
         payment = Payments(self.context).get('mollie_payment')
         order_uid = IPaymentData(self.context).uid_for(order_nr)
+        order = OrderData(self.context, uid=order_uid)
 
-        if mollie_payment.isPaid():
+        if mollie_payment.isPaid() && (order.salaried != ifaces.SALARIED_YES):
             payment.succeed(self.context, order_uid)
-            order = OrderData(self.context, uid=order_uid)
             order.salaried = ifaces.SALARIED_YES
         elif mollie_payment.isPending():
             return False
