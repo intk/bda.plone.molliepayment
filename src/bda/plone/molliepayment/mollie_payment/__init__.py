@@ -51,7 +51,7 @@ def shopmaster_mail(context):
 
 def get_banks():
     mollie = Mollie.API.Client()
-    mollie.setApiKey(TEST_API_KEY)
+    mollie.setApiKey(LIVE_API_KEY)
     issuers = mollie.issuers.all()
     list_ideal_issuers = []
 
@@ -85,7 +85,7 @@ class MolliePay(BrowserView):
 
         try:
             mollie = Mollie.API.Client()
-            mollie.setApiKey(TEST_API_KEY)
+            mollie.setApiKey(LIVE_API_KEY)
             order_redirect_url = '%s/@@mollie_payment_success?order_id=%s' %(base_url, ordernumber)
 
             payment = mollie.payments.create({
@@ -113,7 +113,7 @@ class MolliePaySuccess(BrowserView):
         data = self.request.form
 
         mollie = Mollie.API.Client()
-        mollie.setApiKey(TEST_API_KEY)
+        mollie.setApiKey(LIVE_API_KEY)
 
         #payment_id = data['id']
         #mollie_payment = mollie.payments.get(payment_id)
