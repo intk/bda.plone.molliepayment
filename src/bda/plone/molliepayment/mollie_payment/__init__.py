@@ -128,8 +128,12 @@ class MolliePaySuccess(BrowserView):
 
         payment.succeed(self.context, order_uid)
         order = OrderData(self.context, uid=order_uid)
-        order.salaried = ifaces.SALARIED_YES
-        return True
+        
+        if order.salaried == ifaces.SALARIED_YES:
+            print "Paid!"
+            return True
+        else:
+            return False
 
     @property
     def shopmaster_mail(self):
@@ -140,7 +144,33 @@ class MollieWebhook(BrowserView):
     def __call__(self):
         print "Webhook called"
         data = self.request.form
-        print data
+        
+        if 'id' not in data:
+            return False
+
+        mollie = Mollie.API.Client()
+        mollie.setApiKey(TEST_API_KEY)
+
+        payment_id = data['id']
+        mollie_payment = mollie.payments.get(payment_id)
+        order_nr = mollie_payment['metadata']['order_nr']
+
+        payment = Payments(self.context).get('mollie_payment')
+        order_uid = IPaymentData(self.context).uid_for(order_nr)
+
+        if mollie_payment.isPaid():
+            print "Is Paid!"
+            payment.succeed(self.context, order_uid)
+            order = OrderData(self.context, uid=order_uid)
+            order.salaried = ifaces.SALARIED_YES
+        elif mollie_payment.isPending():
+            return False
+        elif mollie_payment.isOpen():
+            return False
+        else:
+            print "Failed"
+            payment.failed(self.context, order_uid)
+            return False
 
         return True
 
