@@ -22,20 +22,28 @@
     <h1 class="documentFirstHeading"
         i18n:translate="payment_failed">Payment Failed</h1>
     
-    <p>
-      <span i18n:translate="six_payment_failed_text">
-        Sorry. Failed to complete your order. If you think the failure remains
-        on our side, please contact
-      </span>
-      <a href="mailto:shopmaster@example.com"
-         tal:attributes="href string:mailto:${view/shopmaster_mail}"
-         i18n:translate="us">us</a>
-    </p>
-    
-    <a href=""
-       class="payment_button"
-       tal:attributes="href context/absolute_url"
-       i18n:translate="payment_done">continue</a>
+    <div class="results-wrapper">
+          <div class="wrapper-result-page">
+            <p>
+              <span i18n:translate="six_payment_failed_text">
+                Sorry. Failed to complete your order. If you think the failure remains
+                on our side, please contact
+              </span>
+            </p>
+            
+            <p>
+              <a href="mailto:shopmaster@example.com"
+                style="text-decoration:underline;"
+               tal:attributes="href string:mailto:${view/shopmaster_mail}"
+               >Contact <span i18n:translate="us">us</span></a>
+            </p>
+            
+            <a href=""
+               class="payment_button"
+               tal:attributes="href context/absolute_url"
+               i18n:translate="payment_done">continue</a>
+       </div>
+     </div>
 
   </tal:main-macro>
 </metal:main>

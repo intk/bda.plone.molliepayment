@@ -50,9 +50,12 @@
               Something nasty is going on. Payment verification failed.
               If you think the failure remains on our side, please contact
             </span></p>
-            <a href="mailto:shopmaster@example.com"
+            <p>
+              <a href="mailto:shopmaster@example.com"
+              style="text-decoration:underline;"
                tal:attributes="href string:mailto:${view/shopmaster_mail}"
-               i18n:translate="us">us</a>
+               >Contact <span i18n:translate="us">us</span></a>
+             </p>
           
           </div>
         </div>
