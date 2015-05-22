@@ -141,13 +141,14 @@ class MolliePaySuccess(BrowserView):
 
         payment = Payments(self.context).get('mollie_payment')
         order_uid = IPaymentData(self.context).uid_for(order_nr)
-
-        payment.succeed(self.context, order_uid)
         order = OrderData(self.context, uid=order_uid)
-        
+
         if order.salaried == ifaces.SALARIED_YES:
+            payment.succeed(self.context, order_uid)
+            print "salaried"
             return True
         else:
+            print "not salaried"
             return False
 
     @property
@@ -157,6 +158,7 @@ class MolliePaySuccess(BrowserView):
 
 class MollieWebhook(BrowserView):
     def __call__(self):
+        print "call webhook"
         data = self.request.form
         
         if 'id' not in data:
@@ -174,14 +176,18 @@ class MollieWebhook(BrowserView):
         order = OrderData(self.context, uid=order_uid)
 
         if mollie_payment.isPaid():
+            print "is paid"
             if order.salaried != ifaces.SALARIED_YES:
                 payment.succeed(self.context, order_uid)
                 order.salaried = ifaces.SALARIED_YES
         elif mollie_payment.isPending():
+            print "pending"
             return False
         elif mollie_payment.isOpen():
+            print "open"
             return False
         else:
+            print "failed"
             payment.failed(self.context, order_uid)
             return False
 
