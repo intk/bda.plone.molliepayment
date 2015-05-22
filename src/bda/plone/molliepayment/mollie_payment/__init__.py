@@ -167,13 +167,18 @@ class MollieWebhook(BrowserView):
         mollie = Mollie.API.Client()
         mollie.setApiKey(API_KEY)
 
-        payment_id = data['id']
-        mollie_payment = mollie.payments.get(payment_id)
-        order_nr = mollie_payment['metadata']['order_nr']
+        try:
+            payment_id = data['id']
+            print payment_id
 
-        payment = Payments(self.context).get('mollie_payment')
-        order_uid = IPaymentData(self.context).uid_for(order_nr)
-        order = OrderData(self.context, uid=order_uid)
+            mollie_payment = mollie.payments.get(payment_id)
+            order_nr = mollie_payment['metadata']['order_nr']
+
+            payment = Payments(self.context).get('mollie_payment')
+            order_uid = IPaymentData(self.context).uid_for(order_nr)
+            order = OrderData(self.context, uid=order_uid)
+        except:
+            return False
 
         if mollie_payment.isPaid():
             print "is paid"
