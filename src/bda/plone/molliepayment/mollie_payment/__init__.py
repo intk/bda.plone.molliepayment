@@ -17,6 +17,7 @@ from status_codes import get_status_category, SUCCESS_STATUS
 from bda.plone.orders import interfaces as ifaces
 from bda.plone.orders.common import OrderData
 from bda.plone.orders.common import get_order
+import transaction
 
 from bda.plone.payment import (
     Payment,
@@ -169,7 +170,6 @@ class MollieWebhook(BrowserView):
 
         try:
             payment_id = data['id']
-            print payment_id
 
             mollie_payment = mollie.payments.get(payment_id)
             order_nr = mollie_payment['metadata']['order_nr']
@@ -178,13 +178,16 @@ class MollieWebhook(BrowserView):
             order_uid = IPaymentData(self.context).uid_for(order_nr)
             order = OrderData(self.context, uid=order_uid)
         except:
+            print "exception"
             return False
 
         if mollie_payment.isPaid():
             print "is paid"
             if order.salaried != ifaces.SALARIED_YES:
+                transaction.begin()
                 payment.succeed(self.context, order_uid)
                 order.salaried = ifaces.SALARIED_YES
+                transaction.commit()
         elif mollie_payment.isPending():
             print "pending"
             return False
