@@ -17,9 +17,10 @@
 <metal:main fill-slot="main">
   <tal:main-macro metal:define-macro="main">
     
-    <tal:block define="order_data view/verify">
+    <tal:block define="order_data view/verify;
+                      verified python:order_data['verified']">
       
-      <tal:verified condition="verified python:order_data['verified'] == True">
+      <tal:verified condition="verified">
       
         <h1 class="documentFirstHeading"
             i18n:translate="payment_success">Payment Success</h1>
