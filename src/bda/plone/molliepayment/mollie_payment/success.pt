@@ -51,10 +51,26 @@
             var order_shipping = $('#order_shipping').html();
             var order_currency = $('#order_currency').html();
 
-            console.log(order_id);
-            console.log(order_total);
-            console.log(order_shipping);
-            console.log(order_currency);
+            dataLayer.push({
+              'ecommerce': {
+                'purchase': {
+                  'actionField': {
+                    'id': order_id,
+                    'affiliation': 'Teylers museum webshop',
+                    'revenue': order_total,
+                    'shipping': order_shipping
+                  },
+                  'products': [
+                    {
+                      'id': order_id,
+                      'price': order_total,
+                      'quantity': 1
+                    }
+                  ]
+                }
+              }
+
+            });
           });
           
         </script>
