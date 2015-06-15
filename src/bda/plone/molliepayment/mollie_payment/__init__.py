@@ -145,7 +145,14 @@ class MolliePaySuccess(BrowserView):
         order_uid = IPaymentData(self.context).uid_for(order_nr)
         order = OrderData(self.context, uid=order_uid)
 
-        print order.order
+        print "UID"
+        print order_uid
+        print "Total price:"
+        print order.total
+        print "Shipping price:"
+        print order.shipping
+        print "Currency"
+        print order.currency
 
         if order.salaried == ifaces.SALARIED_YES:
             #payment.succeed(self.context, order_uid)
