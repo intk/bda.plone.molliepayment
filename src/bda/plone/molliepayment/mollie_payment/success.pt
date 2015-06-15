@@ -58,7 +58,6 @@
                 'purchase': {
                   'actionField': {
                     'id': order_id,
-                    'affiliation': 'Teylers museum webshop',
                     'revenue': order_total,
                     'tax': order_tax,
                     'shipping': order_shipping
