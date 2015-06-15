@@ -185,7 +185,7 @@ class MollieWebhook(BrowserView):
             if order.salaried != ifaces.SALARIED_YES:
                 transaction.begin()
                 #payment.succeed(self.context, order_uid)
-                order.salaried(ifaces.SALARIED_YES)
+                order.salaried = ifaces.SALARIED_YES
                 transaction.commit()
         elif mollie_payment.isPending():
             return False
