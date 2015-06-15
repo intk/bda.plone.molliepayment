@@ -43,7 +43,11 @@
           <p id="order_shipping" tal:content="python: order_data['shipping']"></p>
           <p id="order_currency" tal:content="python: order_data['currency']"></p>
         </div>
-      
+        
+        <script>
+          console.log("ecommerce script init");
+        </script>
+
       </tal:verified>
       
       <tal:verification_failed condition="not:verified">
@@ -75,9 +79,7 @@
   </tal:main-macro>
 </metal:main>
 
-<script>
-  console.log("ecommerce script init");
-</script>
+
 
 </body>
 </html>
