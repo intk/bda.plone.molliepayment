@@ -45,7 +45,18 @@
         </div>
         
         <script>
-          console.log("ecommerce script init");
+          $(document).ready(function() {
+            var order_id = $('#order_id').html();
+            var order_total = $('#order_total').html();
+            var order_shipping = $('#order_shipping').html();
+            var order_currency = $('#order_currency').html();
+
+            console.log(order_id);
+            console.log(order_total);
+            console.log(order_shipping);
+            console.log(order_currency);
+          });
+          
         </script>
 
       </tal:verified>
