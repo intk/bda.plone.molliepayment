@@ -35,6 +35,11 @@
              i18n:translate="payment_done">continue</a>
           </div>
         </div>
+
+        <div id="order-data">
+          
+          
+        </div>
       
       </tal:verified>
       
