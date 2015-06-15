@@ -17,9 +17,9 @@
 <metal:main fill-slot="main">
   <tal:main-macro metal:define-macro="main">
     
-    <tal:block define="verified view/verify">
+    <tal:block define="order_data view/verify">
       
-      <tal:verified condition="verified">
+      <tal:verified condition="verified python:order_data['verified'] == True">
       
         <h1 class="documentFirstHeading"
             i18n:translate="payment_success">Payment Success</h1>
@@ -37,8 +37,10 @@
         </div>
 
         <div id="order-data">
-          
-          
+          <p id="order_id" tal:content="python: order_data['order_id']"></p>
+          <p id="order_total" tal:content="python: order_data['total']"></p>
+          <p id="order_shipping" tal:content="python: order_data['shipping']"></p>
+          <p id="order_currency" tal:content="python: order_data['currency']"></p>
         </div>
       
       </tal:verified>

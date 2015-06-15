@@ -154,11 +154,20 @@ class MolliePaySuccess(BrowserView):
         print "Currency"
         print order.currency
 
+        order_data = {
+            "order_id": order_uid,
+            "total": order.total,
+            "shipping": order.shipping,
+            "currency": order.currency,
+            "verified": False 
+        }
+
         if order.salaried == ifaces.SALARIED_YES:
+            order_data['verified'] = True
             #payment.succeed(self.context, order_uid)
-            return True
+            return order_data
         else:
-            return False
+            return order_data
 
     @property
     def shopmaster_mail(self):
