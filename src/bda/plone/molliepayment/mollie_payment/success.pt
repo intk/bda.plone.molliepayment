@@ -42,6 +42,7 @@
           <p id="order_total" tal:content="python: order_data['total']"></p>
           <p id="order_shipping" tal:content="python: order_data['shipping']"></p>
           <p id="order_currency" tal:content="python: order_data['currency']"></p>
+          <p id="order_tax" tal:content="python: order_data['tax']"></p>
         </div>
         
         <script>
