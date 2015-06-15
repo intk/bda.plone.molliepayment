@@ -37,7 +37,7 @@
           </div>
         </div>
 
-        <div id="order-data">
+        <div id="order-data" style="display:none">
           <p id="order_id" tal:content="python: order_data['order_id']"></p>
           <p id="order_total" tal:content="python: order_data['total']"></p>
           <p id="order_shipping" tal:content="python: order_data['shipping']"></p>
@@ -74,6 +74,10 @@
     
   </tal:main-macro>
 </metal:main>
+
+<script>
+  console.log("ecommerce script init");
+</script>
 
 </body>
 </html>
