@@ -42,15 +42,11 @@
           <p id="order_total" tal:content="python: order_data['total']"></p>
           <p id="order_shipping" tal:content="python: order_data['shipping']"></p>
           <p id="order_currency" tal:content="python: order_data['currency']"></p>
+          <p id="order_tax" tal:content="python: order_data['tax']"></p>
         </div>
         
         <script>
           $(document).ready(function() {
-            var order_id = $('#order_id').html();
-            var order_total = $('#order_total').html();
-            var order_shipping = $('#order_shipping').html();
-            var order_currency = $('#order_currency').html();
-
             dataLayer.push({
               'ecommerce': {
                 'purchase': {
@@ -58,6 +54,7 @@
                     'id': order_id,
                     'affiliation': 'Teylers museum webshop',
                     'revenue': order_total,
+                    'tax': order.tax,
                     'shipping': order_shipping
                   },
                   'products': [

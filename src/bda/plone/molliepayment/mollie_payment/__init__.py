@@ -155,11 +155,12 @@ class MolliePaySuccess(BrowserView):
         print order.currency
 
         order_data = {
-            "order_id": order_uid,
-            "total": order.total,
-            "shipping": order.shipping,
-            "currency": order.currency,
-            "verified": False 
+            "order_id": str(order_uid),
+            "total": str(order.total),
+            "shipping": str(order.shipping),
+            "currency": str(order.currency),
+            "tax": str(order.vat),
+            "verified": False
         }
 
         if order.salaried == ifaces.SALARIED_YES:
