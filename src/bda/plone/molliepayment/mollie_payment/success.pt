@@ -47,7 +47,30 @@
         
         <script>
 
-          dataLayer.push({
+          $(document).ready(function() {
+            var order_id = $('#order_id').html();
+            var order_total = $('#order_total').html();
+            var order_shipping = $('#order_shipping').html();
+            var order_currency = $('#order_currency').html();
+            var order_tax = $('#order_tax').html();
+            var title = $("title").html();
+
+            dataLayer.push({
+              'event': 'transactionComplete',
+              'transactionId': order_id,
+              'transactionTotal': order_total,
+              'transactionTax': order_tax,
+              'transactionShipping': order_shipping,
+              'transactionProducts': [{
+                  'sku': order_id,
+                  'name': title,
+                  'price': order_total,
+                  'quantity': 1
+              }]
+            });
+          }
+
+          /*dataLayer.push({
             'event': 'transactionComplete',
             'transactionId': '1234',
             'transactionAffiliation': 'Acme Clothing',
@@ -67,7 +90,8 @@
                 'price': 9.99,
                 'quantity': 2
             }]
-          });
+          });*/
+
 
           /*$(document).ready(function() {
             var order_id = $('#order_id').html();
