@@ -156,10 +156,10 @@ class MolliePaySuccess(BrowserView):
 
         order_data = {
             "order_id": str(order_uid),
-            "total": str(order.total),
-            "shipping": str(order.shipping),
+            "total": order.total,
+            "shipping": order.shipping,
             "currency": str(order.currency),
-            "tax": str(order.vat),
+            "tax": order.vat,
             "verified": False
         }
 
