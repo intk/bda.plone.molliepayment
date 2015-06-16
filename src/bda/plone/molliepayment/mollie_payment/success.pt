@@ -48,6 +48,7 @@
         <script>
 
           dataLayer = [{
+            'event': 'gtm.orderCompleted',
             'transactionId': '1234',
             'transactionAffiliation': 'Acme Clothing',
             'transactionTotal': 38.26,
