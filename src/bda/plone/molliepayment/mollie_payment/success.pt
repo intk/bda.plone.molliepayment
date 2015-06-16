@@ -47,8 +47,8 @@
         
         <script>
 
-          dataLayer = [{
-            'event': 'gtm.orderCompleted',
+          dataLayer.push({
+            'event': 'transactionComplete',
             'transactionId': '1234',
             'transactionAffiliation': 'Acme Clothing',
             'transactionTotal': 38.26,
@@ -67,7 +67,7 @@
                 'price': 9.99,
                 'quantity': 2
             }]
-          }];
+          });
 
           /*$(document).ready(function() {
             var order_id = $('#order_id').html();
