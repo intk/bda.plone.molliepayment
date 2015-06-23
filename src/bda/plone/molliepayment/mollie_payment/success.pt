@@ -30,10 +30,17 @@
             <p i18n:translate="six_payment_success_text">
               Your Order has been completed successful.
             </p>
+    
             <a href=""
              class="payment_button"
              tal:attributes="href context/absolute_url"
              i18n:translate="payment_done">continue</a>
+
+             <a href="" tal:attributes="href python: order_data['download_link']" 
+              class="payment_button">Download e-ticket(s)</a>
+          </div>
+          <div class="download-btn">
+            
           </div>
         </div>
 
@@ -69,58 +76,6 @@
               }]
             });
           });
-
-          /*dataLayer.push({
-            'event': 'transactionComplete',
-            'transactionId': '1234',
-            'transactionAffiliation': 'Acme Clothing',
-            'transactionTotal': 38.26,
-            'transactionTax': 1.29,
-            'transactionShipping': 5,
-            'transactionProducts': [{
-                'sku': 'DD44',
-                'name': 'T-Shirt',
-                'category': 'Apparel',
-                'price': 11.99,
-                'quantity': 1
-            },{
-                'sku': 'AA1243544',
-                'name': 'Socks',
-                'category': 'Apparel',
-                'price': 9.99,
-                'quantity': 2
-            }]
-          });*/
-
-
-          /*$(document).ready(function() {
-            var order_id = $('#order_id').html();
-            var order_total = $('#order_total').html();
-            var order_shipping = $('#order_shipping').html();
-            var order_currency = $('#order_currency').html();
-            var order_tax = $('#order_tax').html();
-
-            dataLayer.push({
-              'ecommerce': {
-                'purchase': {
-                  'actionField': {
-                    'id': order_id,
-                    'revenue': order_total,
-                    'tax': order_tax,
-                    'shipping': order_shipping
-                  },
-                  'products': [
-                    {
-                      'id': order_id,
-                      'price': order_total,
-                      'quantity': 1
-                    }
-                  ]
-                }
-              }
-
-            });
-          });*/
           
         </script>
 

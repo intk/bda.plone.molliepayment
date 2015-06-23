@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import urllib
 import urllib2
 import urlparse
@@ -143,31 +146,45 @@ class MolliePaySuccess(BrowserView):
 
         payment = Payments(self.context).get('mollie_payment')
         order_uid = IPaymentData(self.context).uid_for(order_nr)
-        order = OrderData(self.context, uid=order_uid)
 
-        print "UID"
-        print order_uid
-        print "Total price:"
-        print order.total
-        print "Shipping price:"
-        print order.shipping
-        print "Currency"
-        print order.currency
+        if order_uid != None:
 
-        order_data = {
-            "order_id": str(order_uid),
-            "total": order.total,
-            "shipping": order.shipping,
-            "currency": str(order.currency),
-            "tax": order.vat,
-            "verified": False
-        }
+            order = OrderData(self.context, uid=order_uid)
 
-        if order.salaried == ifaces.SALARIED_YES:
-            order_data['verified'] = True
-            #payment.succeed(self.context, order_uid)
-            return order_data
+            order_data = {
+                "order_id": str(order_uid),
+                "total": order.total,
+                "shipping": order.shipping,
+                "currency": str(order.currency),
+                "tax": order.vat,
+                "download_link": "",
+                "verified": False
+            }
+
+            # Generate download link
+            base_url = self.context.portal_url()
+            language = self.context.language
+            params = "?order_id=%s" %(str(order_uid))
+            download_as_pdf_link = "%s/%s/download_as_pdf?page_url=%s/%s/tickets/etickets%s" %(base_url, language, base_url, language, params)
+            order_data['download_link'] = download_as_pdf_link
+
+            if order.salaried != ifaces.SALARIED_YES:
+                order_data['verified'] = True
+                #payment.succeed(self.context, order_uid)
+                return order_data
+            else:
+                return order_data
         else:
+            order_data = {
+                "order_id": "",
+                "total": "",
+                "shipping": "",
+                "currency": "",
+                "tax": "",
+                "download_link": "",
+                "verified": False
+            }
+
             return order_data
 
     @property
