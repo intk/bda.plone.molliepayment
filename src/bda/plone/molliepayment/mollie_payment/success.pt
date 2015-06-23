@@ -18,7 +18,8 @@
   <tal:main-macro metal:define-macro="main">
     
     <tal:block define="order_data view/verify;
-                      verified python:order_data['verified']">
+                      verified python:order_data['verified'];
+                      tickets python: 'tickets' in context.absolute_url()">
       
       <tal:verified condition="verified">
       
@@ -37,7 +38,7 @@
              i18n:translate="payment_done">continue</a>
 
              <a href="" tal:attributes="href python: order_data['download_link']" 
-              class="payment_button">Download e-ticket(s)</a>
+              class="payment_button" tal:condition="tickets">Download e-ticket(s)</a>
           </div>
           <div class="download-btn">
             

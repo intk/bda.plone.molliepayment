@@ -168,7 +168,7 @@ class MolliePaySuccess(BrowserView):
             download_as_pdf_link = "%s/%s/download_as_pdf?page_url=%s/%s/tickets/etickets%s" %(base_url, language, base_url, language, params)
             order_data['download_link'] = download_as_pdf_link
 
-            if order.salaried != ifaces.SALARIED_YES:
+            if order.salaried == ifaces.SALARIED_YES:
                 order_data['verified'] = True
                 #payment.succeed(self.context, order_uid)
                 return order_data
