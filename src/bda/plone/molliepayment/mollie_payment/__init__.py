@@ -170,7 +170,7 @@ class MolliePaySuccess(BrowserView):
 
             if order.salaried == ifaces.SALARIED_YES:
                 order_data['verified'] = True
-                payment.succeed(self.context, order_uid)
+                payment.succeed(self.context, order_uid, dict(), order_data['download_link'])
                 return order_data
             else:
                 return order_data
@@ -215,7 +215,6 @@ class MollieWebhook(BrowserView):
             return False
 
         if mollie_payment.isPaid():
-            print "Is paid"
             if order.salaried != ifaces.SALARIED_YES:
                 transaction.begin()
                 #payment.succeed(self.context, order_uid)
