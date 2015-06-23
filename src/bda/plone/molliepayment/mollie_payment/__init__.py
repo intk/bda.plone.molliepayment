@@ -152,6 +152,7 @@ class MolliePaySuccess(BrowserView):
             order = OrderData(self.context, uid=order_uid)
 
             order_data = {
+                "ordernumber": str(order_nr),
                 "order_id": str(order_uid),
                 "total": order.total,
                 "shipping": order.shipping,

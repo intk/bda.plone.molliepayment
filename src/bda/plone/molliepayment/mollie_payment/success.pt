@@ -38,7 +38,17 @@
              i18n:translate="payment_done">continue</a>
 
              <a href="" tal:attributes="href python: order_data['download_link']" 
-              class="payment_button" tal:condition="tickets">Download e-ticket(s)</a>
+              class="payment_button" tal:condition="tickets"><i class="fa fa-download"></i>  Download e-ticket(s)</a>
+
+            <div class="ticket-information" tal:condition="python: tickets and order_data['ordernumber'] != ''">
+              <p i18n:translate="order_number_text" id="ordernumber_order_text">
+                Uw boeking (ordernummer: <strong tal:content="python: order_data['ordernumber']"></strong>) is met succes afgerond.
+              </p>
+              <p i18n:translate="spam_order_message" id="spam_order_message">
+                Binnen enkele minuten ontvangt u de boekingsbevestiging met een link naar uw e-tickets.
+                Controleer uw spam en ongewenste e-mail map wanneer u de e-mail niet ontvangen heeft.
+              </p>
+            </div>
           </div>
           <div class="download-btn">
             
