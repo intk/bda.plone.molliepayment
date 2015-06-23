@@ -170,7 +170,7 @@ class MolliePaySuccess(BrowserView):
 
             if order.salaried == ifaces.SALARIED_YES:
                 order_data['verified'] = True
-                #payment.succeed(self.context, order_uid)
+                payment.succeed(self.context, order_uid)
                 return order_data
             else:
                 return order_data
