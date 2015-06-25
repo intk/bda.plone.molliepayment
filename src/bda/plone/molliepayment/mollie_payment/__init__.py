@@ -142,10 +142,19 @@ class MolliePaySuccess(BrowserView):
         mollie = Mollie.API.Client()
         mollie.setApiKey(API_KEY)
 
-        order_nr = data['order_id']
+        order_nr = None
+        if 'order_id' in data:
+            order_nr = data['order_id']
+        
+        order_uid_param = None
+        if 'order_uid' in data:
+            order_uid_param = data['order_uid']
 
         payment = Payments(self.context).get('mollie_payment')
         order_uid = IPaymentData(self.context).uid_for(order_nr)
+        
+        if order_uid == None and order_uid_param != None:
+            order_uid = order_uid_param
 
         if order_uid != None:
 
