@@ -21,6 +21,8 @@ from bda.plone.orders import interfaces as ifaces
 from bda.plone.orders.common import OrderData
 from bda.plone.orders.common import get_order
 import transaction
+from collective.sendaspdf.browser.base import BaseView
+from collective.sendaspdf.browser.send import SendForm
 
 from bda.plone.payment import (
     Payment,
@@ -155,6 +157,7 @@ class MolliePaySuccess(BrowserView):
         
         if order_uid == None and order_uid_param != None:
             order_uid = order_uid_param
+            order_nr = order_uid_param
 
         if order_uid != None:
 
@@ -177,6 +180,8 @@ class MolliePaySuccess(BrowserView):
             params = "?order_id=%s" %(str(order_uid))
             download_as_pdf_link = "%s/%s/download_as_pdf?page_url=%s/%s/tickets/etickets%s" %(base_url, language, base_url, language, params)
             order_data['download_link'] = download_as_pdf_link
+
+            payment.succeed(self.context, order_uid, dict(), order_data['download_link'])
 
             if order.salaried == ifaces.SALARIED_YES:
                 order_data['verified'] = True
