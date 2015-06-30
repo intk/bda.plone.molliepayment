@@ -152,18 +152,17 @@ class MolliePaySuccess(BrowserView):
         if 'order_uid' in data:
             order_uid_param = data['order_uid']
 
-        payment = Payments(self.context).get('mollie_payment')
-        order_uid = IPaymentData(self.context).uid_for(order_nr)
-        
-        if order_uid == None and order_uid_param != None:
+        if order_nr == None and order_uid_param != None:
             order_uid = order_uid_param
             order_nr = order_uid_param
 
+        payment = Payments(self.context).get('mollie_payment')
+        if order_nr != None and order_uid_param == None:
+            order_uid = IPaymentData(self.context).uid_for(order_nr)
+        
         if order_uid != None:
-
             order = OrderData(self.context, uid=order_uid)
             order_nr = order.order.attrs['ordernumber']
-
             order_data = {  
                 "ordernumber": str(order_nr),
                 "order_id": str(order_uid),
@@ -185,7 +184,6 @@ class MolliePaySuccess(BrowserView):
             if order.salaried == ifaces.SALARIED_YES:
                 order_data['verified'] = True
                 payment.succeed(self.context, order_uid, dict(), order_data['download_link'])
-                return order_data
             else:
                 return order_data
         else:
