@@ -162,8 +162,9 @@ class MolliePaySuccess(BrowserView):
         if order_uid != None:
 
             order = OrderData(self.context, uid=order_uid)
+            order_nr = order.order.attrs['ordernumber']
 
-            order_data = {
+            order_data = {  
                 "ordernumber": str(order_nr),
                 "order_id": str(order_uid),
                 "total": order.total,

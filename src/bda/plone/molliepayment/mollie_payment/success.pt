@@ -32,10 +32,10 @@
               Your Order has been completed successful.
             </p>
     
-            <a href=""
+            <!--<a href=""
              class="payment_button"
              tal:attributes="href context/absolute_url"
-             i18n:translate="payment_done">continue</a>
+             i18n:translate="payment_done">continue</a>-->
 
              <a href="" tal:attributes="href python: order_data['download_link']" 
               class="payment_button" tal:condition="tickets"><i class="fa fa-download"></i>  Download e-ticket(s)</a>
@@ -83,7 +83,8 @@
                   'sku': order_id,
                   'name': title,
                   'price': order_total,
-                  'quantity': 1
+                  'quantity': 1,
+                  'category': 'E-Ticket'
               }]
             });
           });
