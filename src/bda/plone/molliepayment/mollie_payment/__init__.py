@@ -140,6 +140,10 @@ class MolliePay(BrowserView):
 class MolliePaySuccess(BrowserView):
     def verify(self):
         data = self.request.form
+        context_url = self.context.absolute_url()
+        tickets = False
+        if 'tickets' in context_url:
+            tickets = True
 
         mollie = Mollie.API.Client()
         mollie.setApiKey(API_KEY)
@@ -170,16 +174,18 @@ class MolliePaySuccess(BrowserView):
                 "shipping": order.shipping,
                 "currency": str(order.currency),
                 "tax": order.vat,
-                "download_link": "",
+                "ticket": tickets,
+                "download_link": None,
                 "verified": False
             }
 
             # Generate download link
-            base_url = self.context.portal_url()
-            language = self.context.language
-            params = "?order_id=%s" %(str(order_uid))
-            download_as_pdf_link = "%s/%s/download_as_pdf?page_url=%s/%s/tickets/etickets%s" %(base_url, language, base_url, language, params)
-            order_data['download_link'] = download_as_pdf_link
+            if tickets:
+                base_url = self.context.portal_url()
+                language = self.context.language
+                params = "?order_id=%s" %(str(order_uid))
+                download_as_pdf_link = "%s/%s/download_as_pdf?page_url=%s/%s/tickets/etickets%s" %(base_url, language, base_url, language, params)
+                order_data['download_link'] = download_as_pdf_link
 
             if order.salaried == ifaces.SALARIED_YES:
                 order_data['verified'] = True
@@ -194,7 +200,8 @@ class MolliePaySuccess(BrowserView):
                 "shipping": "",
                 "currency": "",
                 "tax": "",
-                "download_link": "",
+                "ticket": tickets,
+                "download_link": None,
                 "verified": False
             }
 

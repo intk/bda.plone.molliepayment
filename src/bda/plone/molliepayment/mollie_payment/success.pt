@@ -19,6 +19,7 @@
     
     <tal:block define="order_data view/verify;
                       verified python:order_data['verified'];
+                      ticket python:order_data['ticket'];
                       tickets python: 'tickets' in context.absolute_url()">
       
       <tal:verified condition="verified">
@@ -31,11 +32,6 @@
             <p i18n:translate="six_payment_success_text">
               Your Order has been completed successful.
             </p>
-    
-            <!--<a href=""
-             class="payment_button"
-             tal:attributes="href context/absolute_url"
-             i18n:translate="payment_done">continue</a>-->
 
              <a href="" tal:attributes="href python: order_data['download_link']" 
               class="payment_button" tal:condition="tickets"><i class="fa fa-download"></i>  Download e-ticket(s)</a>
@@ -61,6 +57,9 @@
           <p id="order_shipping" tal:content="python: order_data['shipping']"></p>
           <p id="order_currency" tal:content="python: order_data['currency']"></p>
           <p id="order_tax" tal:content="python: order_data['tax']"></p>
+          <p id="order_type" tal:condition="ticket">E-Ticket</p>
+          <p id="order_type" tal:condition="not:ticket">Product</p>
+
         </div>
         
         <script>
@@ -72,6 +71,7 @@
             var order_currency = $('#order_currency').html();
             var order_tax = $('#order_tax').html();
             var title = $("title").html();
+            var order_type = $('#order_type').html();
 
             dataLayer.push({
               'event': 'transactionComplete',
@@ -84,7 +84,7 @@
                   'name': title,
                   'price': order_total,
                   'quantity': 1,
-                  'category': 'E-Ticket'
+                  'category': order_type
               }]
             });
           });
