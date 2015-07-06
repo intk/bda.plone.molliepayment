@@ -166,8 +166,9 @@ class MolliePaySuccess(BrowserView):
     def verify(self):
         data = self.request.form
         context_url = self.context.absolute_url()
+        
         tickets = False
-        if 'tickets' in context_url:
+        if '/tickets' in context_url:
             tickets = True
 
         mollie = Mollie.API.Client()
