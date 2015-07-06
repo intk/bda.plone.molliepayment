@@ -11,7 +11,7 @@ from zope.i18nmessageid import MessageFactory
 from Products.Five import BrowserView
 from Products.CMFCore.utils import getToolByName
 from bda.plone.payment.interfaces import IPaymentData
-
+from bda.plone.orders.common import get_orders_soup
 from bda.plone.shop.interfaces import IShopSettings
 from zope.component import getUtility
 from plone.registry.interfaces import IRegistry
@@ -138,6 +138,31 @@ class MolliePay(BrowserView):
 # Payment success
 #
 class MolliePaySuccess(BrowserView):
+    def get_header_image(self, is_ticket):
+        if is_ticket:
+            folder = self.context
+            if folder.portal_type == "Folder":
+                contents = folder.getFolderContents({"portal_type": "Image", "Title":"tickets-header"})
+                if len(contents) > 0:
+                    image = contents[0]
+                    url = image.getURL()
+                    scale_url = "%s/%s" %(url, "@@images/image/large")
+                    return scale_url
+        else:
+            brains = self.context.portal_catalog(path={"query": "/NewTeylers/nl/tickets", "depth": 0})
+            if len(brains) > 0:
+                brain = brains[0]
+                if brain.portal_type == "Folder":
+                    folder = brain.getObject()
+                    contents = folder.getFolderContents({"portal_type": "Image", "Title":"tickets-header"})
+                    if len(contents) > 0:
+                        image = contents[0]
+                        url = image.getURL()
+                        scale_url = "%s/%s" %(url, "@@images/image/large")
+                        return scale_url
+
+            return False
+
     def verify(self):
         data = self.request.form
         context_url = self.context.absolute_url()
@@ -187,9 +212,14 @@ class MolliePaySuccess(BrowserView):
                 download_as_pdf_link = "%s/%s/download_as_pdf?page_url=%s/%s/tickets/etickets%s" %(base_url, language, base_url, language, params)
                 order_data['download_link'] = download_as_pdf_link
 
-            if order.salaried == ifaces.SALARIED_YES:
+            if order.order.attrs['salaried'] == ifaces.SALARIED_YES:
                 order_data['verified'] = True
-                payment.succeed(self.context, order_uid, dict(), order_data['download_link'])
+                if not order.order.attrs['email_sent']:
+                    if order.total > 0:
+                        payment.succeed(self.context, order_uid, dict(), order_data['download_link'])
+                    order.order.attrs['email_sent'] = True
+                    orders_soup = get_orders_soup(self.context)
+                    orders_soup.reindex(records=[order.order])
                 return order_data
             else:
                 return order_data
@@ -235,13 +265,11 @@ class MollieWebhook(BrowserView):
             return False
 
         if mollie_payment.isPaid():
-            print "is paid"
             if order.salaried != ifaces.SALARIED_YES:
-                print "mark as paid"
-                transaction.begin()
-                #payment.succeed(self.context, order_uid)
                 order.salaried = ifaces.SALARIED_YES
-                transaction.commit()
+                order.order.attrs['salaried'] = ifaces.SALARIED_YES
+                orders_soup = get_orders_soup(self.context)
+                orders_soup.reindex(records=[order.order])
         elif mollie_payment.isPending():
             return False
         elif mollie_payment.isOpen():

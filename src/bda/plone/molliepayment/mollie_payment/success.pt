@@ -20,12 +20,15 @@
     <tal:block define="order_data view/verify;
                       verified python:order_data['verified'];
                       ticket python:order_data['ticket'];
-                      tickets python: 'tickets' in context.absolute_url()">
+                      tickets python: 'tickets' in context.absolute_url();
+                      header_image python: view.get_header_image(tickets)">
       
       <tal:verified condition="verified">
-      
-        <h1 class="documentFirstHeading"
-            i18n:translate="payment_success">Payment Success</h1>
+        
+        <div id="cart-page-header" tal:attributes="style python: 'background-image:url(%s)' %(header_image)">
+          <h1 class="documentFirstHeading"
+              i18n:translate="payment_success">Payment Success</h1>
+        </div>
         
         <div class="results-wrapper">
           <div class="wrapper-result-page">
@@ -59,7 +62,6 @@
           <p id="order_tax" tal:content="python: order_data['tax']"></p>
           <p id="order_type" tal:condition="ticket">E-Ticket</p>
           <p id="order_type" tal:condition="not:ticket">Product</p>
-
         </div>
         
         <script>

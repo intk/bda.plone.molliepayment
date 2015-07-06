@@ -22,6 +22,7 @@ src/bda/plone/molliepayment/locales/en/LC_MESSAGES/bda.plone.molliepayment.mo
 src/bda/plone/molliepayment/locales/en/LC_MESSAGES/bda.plone.molliepayment.po
 src/bda/plone/molliepayment/mollie_payment/__init__.py
 src/bda/plone/molliepayment/mollie_payment/aborted.pt
+src/bda/plone/molliepayment/mollie_payment/cart_old.pt
 src/bda/plone/molliepayment/mollie_payment/configure.zcml
 src/bda/plone/molliepayment/mollie_payment/easyideal.py
 src/bda/plone/molliepayment/mollie_payment/exceptions.py
