@@ -149,21 +149,15 @@ class MolliePaySuccess(BrowserView):
                     scale_url = "%s/%s" %(url, "@@images/image/large")
                     return scale_url
         else:
-            header_image = "++resource++plonetheme.tm.css/TEYLERS69.jpg"
-            return header_image
-            """brains = self.context.portal_catalog(path={"query": "/NewTeylers/nl/tickets", "depth": 0})
+            brains = self.context.portal_catalog(Title="webwinkel-header", portal_type="Image")
             if len(brains) > 0:
                 brain = brains[0]
-                if brain.portal_type == "Folder":
-                    folder = brain.getObject()
-                    contents = folder.getFolderContents({"portal_type": "Image", "Title":"tickets-header"})
-                    if len(contents) > 0:
-                        image = contents[0]
-                        url = image.getURL()
-                        scale_url = "%s/%s" %(url, "@@images/image/large")
-                        return scale_url
+                if brain.portal_type == "Image":
+                    url = brain.getURL()
+                    scale_url = "%s/%s" %(url, "@@images/image/large")
+                    return scale_url
 
-            return False"""
+            return ""
 
     def verify(self):
         data = self.request.form
