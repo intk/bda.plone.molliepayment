@@ -32,8 +32,10 @@
         
         <div class="results-wrapper">
           <div class="wrapper-result-page">
-            <p i18n:translate="six_payment_success_text">
-              Your Order has been completed successful.
+
+            <p>
+              Hartelijk bedankt voor uw bestelling! Deze wordt binnen 3-5 dagen via TPG Post verzonden.<br>
+Binnen enkele minuten ontvangt u een bevestiging van uw bestelling per mail.<br>Controleer uw spam en ongewenste e-mail map wanneer u de e-mail niet ontvangen heeft.
             </p>
 
              <a href="" tal:attributes="href python: order_data['download_link']" 
