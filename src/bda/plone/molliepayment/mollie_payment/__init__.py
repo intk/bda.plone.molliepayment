@@ -36,6 +36,7 @@ from easyideal import EasyIdeal
 from easyideal import ReturnValidator
 from decimal import Decimal as D
 
+import json
 import Mollie
 
 logger = logging.getLogger('bda.plone.payment')
@@ -198,8 +199,23 @@ class MolliePaySuccess(BrowserView):
                 "tax": order.vat,
                 "ticket": tickets,
                 "download_link": None,
-                "verified": False
+                "verified": False,
+                "already_sent":False,
+                "bookings":json.dumps([])
             }
+
+            order_bookings = []
+
+            for booking in order.bookings:
+                order_data.append({
+                    'sku':str(booking.attrs['buyable_uid']),
+                    'name': str(booking.attrs['title']),
+                    'price': booking.attrs['net'],
+                    'quantity': booking.attrs['buyable_count'],
+                    'category': 'Product'
+                })
+
+            order_data['bookings'] = json.dumps(order_bookings)
 
             # Generate download link
             if tickets:
@@ -211,6 +227,7 @@ class MolliePaySuccess(BrowserView):
 
             if order.order.attrs['salaried'] == ifaces.SALARIED_YES:
                 order_data['verified'] = True
+                
                 if not order.order.attrs['email_sent']:
                     if order.total > 0:
                         order.order.attrs['email_sent'] = True
@@ -218,6 +235,7 @@ class MolliePaySuccess(BrowserView):
                         orders_soup.reindex(records=[order.order])
                         payment.succeed(self.context, order_uid, dict(), order_data['download_link'])
                 else:
+                    order_data['already_sent'] = True
                     order.order.attrs['email_sent'] = True
                     orders_soup = get_orders_soup(self.context)
                     orders_soup.reindex(records=[order.order])
