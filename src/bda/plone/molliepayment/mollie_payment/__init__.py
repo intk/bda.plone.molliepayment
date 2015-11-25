@@ -214,14 +214,17 @@ class MolliePaySuccess(BrowserView):
                 if not order.order.attrs['email_sent']:
                     if order.total > 0:
                         payment.succeed(self.context, order_uid, dict(), order_data['download_link'])
-                        
+                    transaction.begin()
                     order.order.attrs['email_sent'] = True
                     orders_soup = get_orders_soup(self.context)
                     orders_soup.reindex(records=[order.order])
+                    transaction.commit()
                 else:
+                    transaction.begin()
                     order.order.attrs['email_sent'] = True
                     orders_soup = get_orders_soup(self.context)
                     orders_soup.reindex(records=[order.order])
+                    transaction.commit()
                     
                 return order_data
             else:
@@ -269,10 +272,12 @@ class MollieWebhook(BrowserView):
 
         if mollie_payment.isPaid():
             if order.salaried != ifaces.SALARIED_YES:
+                transaction.begin()
                 order.salaried = ifaces.SALARIED_YES
                 order.order.attrs['salaried'] = ifaces.SALARIED_YES
                 orders_soup = get_orders_soup(self.context)
                 orders_soup.reindex(records=[order.order])
+                transaction.commit()
         elif mollie_payment.isPending():
             return False
         elif mollie_payment.isOpen():
