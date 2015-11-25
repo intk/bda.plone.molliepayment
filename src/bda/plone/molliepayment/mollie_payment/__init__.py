@@ -207,7 +207,7 @@ class MolliePaySuccess(BrowserView):
             order_bookings = []
 
             for booking in order.bookings:
-                order_data.append({
+                order_bookings.append({
                     'sku':str(booking.attrs['buyable_uid']),
                     'name': str(booking.attrs['title']),
                     'price': booking.attrs['net'],
