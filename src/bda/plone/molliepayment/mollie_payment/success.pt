@@ -64,7 +64,7 @@ Binnen enkele minuten ontvangt u een bevestiging van uw bestelling per mail.<br>
           <p id="order_tax" tal:content="python: order_data['tax']"></p>
           <p id="order_type" tal:condition="ticket">E-Ticket</p>
           <p id="order_type" tal:condition="not:ticket">Product</p>
-          <p id="order_bookings" tal:attributes="data-bookings order_data['bookings']"></p>
+          <p id="order_bookings" tal:attributes="data-bookings python:order_data['bookings']"></p>
         </div>
         
         <tal:send_ga tal:condition="python: order_data['already_sent'] == False">
