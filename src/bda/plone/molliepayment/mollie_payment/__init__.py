@@ -205,17 +205,23 @@ class MolliePaySuccess(BrowserView):
             }
 
             order_bookings = []
-
+           
             for booking in order.bookings:
-                order_bookings.append({
-                    'sku':str(booking.attrs['buyable_uid']),
-                    'name': str(booking.attrs['title']),
-                    'price': float(booking.attrs['net']),
-                    'quantity': int(booking.attrs['buyable_count']),
-                    'category': 'Product'
-                })
+                try:
+                    order_bookings.append({
+                        'sku':str(booking.attrs['buyable_uid']),
+                        'name': str(booking.attrs['title']),
+                        'price': float(booking.attrs['net']),
+                        'quantity': int(booking.attrs['buyable_count']),
+                        'category': 'Product'
+                    })
+                except:
+                    pass
 
-            order_data['bookings'] = json.dumps(order_bookings)
+            try:
+                order_data['bookings'] = json.dumps(order_bookings)
+            except:
+                order_data['bookings'] = json.dumps([])
 
             # Generate download link
             if tickets:
