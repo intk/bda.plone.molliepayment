@@ -99,8 +99,8 @@ class MolliePay(BrowserView):
 
         webhookUrl = '%s/@@mollie_webhook' %(base_url)
         
-        if testing:
-            webhookUrl = ""
+        #if testing:
+        #    #webhookUrl = webhookUrl
 
         try:
             mollie = Mollie.API.Client()
