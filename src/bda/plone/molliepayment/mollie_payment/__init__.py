@@ -231,7 +231,7 @@ class MolliePaySuccess(BrowserView):
                 download_as_pdf_link = "%s/%s/download_as_pdf?page_url=%s/%s/tickets/etickets%s" %(base_url, language, base_url, language, params)
                 order_data['download_link'] = download_as_pdf_link
 
-            if order.order.attrs['salaried'] == ifaces.SALARIED_YES:
+            if order.salaried == ifaces.SALARIED_YES:
                 order_data['verified'] = True
                 
                 if not order.order.attrs['email_sent']:
@@ -298,7 +298,7 @@ class MollieWebhook(BrowserView):
                     orders_soup = get_orders_soup(self.context)
                     orders_soup.reindex(records=[order.order])
                     payment.succeed(self.context, order_uid, dict(), None)
-                    
+
         elif mollie_payment.isPending():
             return False
         elif mollie_payment.isOpen():
