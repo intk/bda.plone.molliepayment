@@ -98,6 +98,8 @@ class MolliePay(BrowserView):
         real_amount = float(int(amount)/100.0)
 
         webhookUrl = '%s/@@mollie_webhook' %(base_url)
+
+        print webhookUrl
         
         #if testing:
         #    #webhookUrl = webhookUrl
