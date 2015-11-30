@@ -235,23 +235,21 @@ class MolliePaySuccess(BrowserView):
                 download_as_pdf_link = "%s/%s/download_as_pdf?page_url=%s/%s/tickets/etickets%s" %(base_url, language, base_url, language, params)
                 order_data['download_link'] = download_as_pdf_link
 
+
+            print order.order.attrs['email_sent']
+
             if order.salaried == ifaces.SALARIED_YES:
                 order_data['verified'] = True
-                
-                print order.order.attrs['email_sent']
-
-                if not order.order.attrs['email_sent']:
+                if order.order.attrs['email_sent'] == 'no':
                     if order.total > 0:
-                        order.order.attrs['email_sent'] = True
+                        order.order.attrs['email_sent'] = 'yes'
                         orders_soup = get_orders_soup(self.context)
                         orders_soup.reindex(records=[order.order])
-
                         payment.succeed(self.context, order_uid, dict(), None)
-                        print order.order.attrs['email_sent']
                         
                 else:
                     order_data['already_sent'] = True
-                    order.order.attrs['email_sent'] = True
+                    order.order.attrs['email_sent'] = 'yes'
                     orders_soup = get_orders_soup(self.context)
                     orders_soup.reindex(records=[order.order])
                 return order_data
