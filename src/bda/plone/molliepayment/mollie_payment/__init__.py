@@ -238,6 +238,8 @@ class MolliePaySuccess(BrowserView):
             if order.salaried == ifaces.SALARIED_YES:
                 order_data['verified'] = True
                 
+                print order.order.attrs['email_sent']
+                
                 if not order.order.attrs['email_sent']:
                     if order.total > 0:
                         order.order.attrs['email_sent'] = True
