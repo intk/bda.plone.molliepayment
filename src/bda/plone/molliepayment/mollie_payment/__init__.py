@@ -24,6 +24,8 @@ import transaction
 from collective.sendaspdf.browser.base import BaseView
 from collective.sendaspdf.browser.send import SendForm
 
+from plone import api
+
 from bda.plone.payment import (
     Payment,
     Payments,
@@ -97,7 +99,9 @@ class MolliePay(BrowserView):
         
         real_amount = float(int(amount)/100.0)
 
-        webhookUrl = '%s/@@mollie_webhook' %(base_url)
+        site_url = api.portal.get().absolute_url()
+
+        webhookUrl = '%s/@@mollie_webhook' %(site_url)
 
         print webhookUrl
         
