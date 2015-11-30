@@ -301,9 +301,10 @@ class MollieWebhook(BrowserView):
 
                 if not order.order.attrs['email_sent']:
                     order.order.attrs['email_sent'] = True
-                    orders_soup = get_orders_soup(self.context)
-                    orders_soup.reindex(records=[order.order])
                     payment.succeed(self.context, order_uid, dict(), None)
+                
+                #orders_soup = get_orders_soup(self.context)
+                #orders_soup.reindex(records=[order.order])
 
         elif mollie_payment.isPending():
             return False
