@@ -101,7 +101,7 @@ class MolliePay(BrowserView):
 
         site_url = api.portal.get().absolute_url()
 
-        webhookUrl = '%s/@@mollie_webhook' %(site_url)
+        webhookUrl = '%s/nl/@@mollie_webhook' %(site_url)
 
         print webhookUrl
         
