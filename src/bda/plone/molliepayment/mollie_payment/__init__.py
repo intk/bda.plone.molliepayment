@@ -49,7 +49,7 @@ _ = MessageFactory('bda.plone.payment')
 # Mollie Data
 #
 
-testing = True
+testing = False
 
 TEST_API_KEY = "test_aUZkTbRsiUcDnjSX4D7AqvxTp5TKJP"
 LIVE_API_KEY = "live_BndGVkfjTnHuijrMPeKjnpGgV4rL7n"
@@ -234,9 +234,6 @@ class MolliePaySuccess(BrowserView):
                 params = "?order_id=%s" %(str(order_uid))
                 download_as_pdf_link = "%s/%s/download_as_pdf?page_url=%s/%s/tickets/etickets%s" %(base_url, language, base_url, language, params)
                 order_data['download_link'] = download_as_pdf_link
-
-
-            print order.order.attrs['email_sent']
 
             if order.salaried == ifaces.SALARIED_YES:
                 order_data['verified'] = True
