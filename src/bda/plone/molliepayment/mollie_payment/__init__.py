@@ -48,7 +48,7 @@ _ = MessageFactory('bda.plone.payment')
 # Mollie Data
 #
 
-testing = True
+testing = False
 
 TEST_API_KEY = "test_aUZkTbRsiUcDnjSX4D7AqvxTp5TKJP"
 LIVE_API_KEY = "live_BndGVkfjTnHuijrMPeKjnpGgV4rL7n"
@@ -100,7 +100,6 @@ class MolliePay(BrowserView):
         real_amount = float(int(amount)/100.0)
 
         site_url = api.portal.get().absolute_url()
-
         webhookUrl = '%s/nl/@@mollie_webhook' %(site_url)
         
         #if testing:
@@ -300,6 +299,7 @@ class MollieWebhook(BrowserView):
             if order.salaried != ifaces.SALARIED_YES:
                 order.salaried = ifaces.SALARIED_YES
                 order.order.attrs['salaried'] = ifaces.SALARIED_YES
+                order.order.attrs['email_sent'] = 'no'
                 orders_soup = get_orders_soup(self.context)
                 orders_soup.reindex(records=[order.order])
 
