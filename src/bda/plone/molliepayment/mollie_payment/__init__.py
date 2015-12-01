@@ -194,6 +194,7 @@ class MolliePaySuccess(BrowserView):
         if order_uid != None:
             order = OrderData(self.context, uid=order_uid)
             order_nr = order.order.attrs['ordernumber']
+
             order_data = {  
                 "ordernumber": str(order_nr),
                 "order_id": str(order_uid),
@@ -212,6 +213,10 @@ class MolliePaySuccess(BrowserView):
            
             for booking in order.bookings:
                 try:
+                    sku = str(booking.attrs['item_number'])
+                    if not sku:
+                        sku = str(booking.attrs['buyable_uid'])
+                        
                     order_bookings.append({
                         'sku':str(booking.attrs['buyable_uid']),
                         'name': str(booking.attrs['title']),
