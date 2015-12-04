@@ -214,7 +214,7 @@ class MolliePaySuccess(BrowserView):
             for booking in order.bookings:
                 try:
                     sku = str(booking.attrs['item_number'])
-                    if not sku:
+                    if not sku or sku == "None":
                         sku = str(booking.attrs['buyable_uid'])
 
                     order_bookings.append({
