@@ -97,9 +97,13 @@ Binnen enkele minuten ontvangt u een bevestiging van uw bestelling per mail.<br>
       </tal:verified>
       
       <tal:verification_failed condition="not:verified">
-      
-        <h1 class="documentFirstHeading"
+        
+        <div id="cart-page-header" tal:attributes="style python: 'background-image:url(%s)' %(header_image)">
+          <h1 class="documentFirstHeading"
             i18n:translate="payment_error">Payment Error</h1>
+        </div>
+        
+        
         
         
         <div class="results-wrapper">

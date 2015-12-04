@@ -20,7 +20,8 @@
     <tal:finalize define="finalized view/finalize" />
     <tal:header
       tal:define="header_image python: view.get_header_image(tickets)">
-    <div id="cart-page-header" tal:attributes="style python: 'background-image:url(%s)' %(header_image)">
+        
+        <div id="cart-page-header" tal:attributes="style python: 'background-image:url(%s)' %(header_image)">
           <h1 class="documentFirstHeading"
               i18n:translate="payment_failed">Payment Failed</h1>
         </div>
