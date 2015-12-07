@@ -23,6 +23,8 @@ from bda.plone.orders.common import get_order
 import transaction
 from collective.sendaspdf.browser.base import BaseView
 from collective.sendaspdf.browser.send import SendForm
+from bda.plone.orders.common import get_bookings_soup
+from zope.component.hooks import getSite
 
 from plone import api
 
@@ -167,7 +169,7 @@ class MolliePaySuccess(BrowserView):
     def verify(self):
         data = self.request.form
         context_url = self.context.absolute_url()
-        
+
         tickets = False
         if '/tickets' in context_url:
             tickets = True
@@ -247,6 +249,7 @@ class MolliePaySuccess(BrowserView):
                         order.order.attrs['email_sent'] = 'yes'
                         orders_soup = get_orders_soup(self.context)
                         orders_soup.reindex(records=[order.order])
+                        orders_soup.rebuild()
                         #payment.succeed(self.request, order_uid, dict(), None)
                 else:
                     if order.order.attrs['email_sent'] == 'yes':
@@ -254,6 +257,7 @@ class MolliePaySuccess(BrowserView):
                     order.order.attrs['email_sent'] = 'yes'
                     orders_soup = get_orders_soup(self.context)
                     orders_soup.reindex(records=[order.order])
+                    orders_soup.rebuild()
                 return order_data
             else:
                 return order_data
@@ -305,6 +309,7 @@ class MollieWebhook(BrowserView):
                 order.order.attrs['email_sent'] = 'no'
                 orders_soup = get_orders_soup(self.context)
                 orders_soup.reindex(records=[order.order])
+                orders_soup.rebuild()
                 payment.succeed(self.request, order_uid, dict(), None)
                 return True
 
