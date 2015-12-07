@@ -51,7 +51,7 @@ _ = MessageFactory('bda.plone.payment')
 # Mollie Data
 #
 
-testing = True
+testing = False
 
 TEST_API_KEY = "test_aUZkTbRsiUcDnjSX4D7AqvxTp5TKJP"
 LIVE_API_KEY = "live_BndGVkfjTnHuijrMPeKjnpGgV4rL7n"
