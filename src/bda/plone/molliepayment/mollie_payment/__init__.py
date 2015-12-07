@@ -248,9 +248,9 @@ class MolliePaySuccess(BrowserView):
                         orders_soup = get_orders_soup(self.context)
                         orders_soup.reindex(records=[order.order])
                         #payment.succeed(self.request, order_uid, dict(), None)
-                        
                 else:
-                    order_data['already_sent'] = True
+                    if order.order.attrs['email_sent'] != 'yes':
+                        order_data['already_sent'] = True
                     order.order.attrs['email_sent'] = 'yes'
                     orders_soup = get_orders_soup(self.context)
                     orders_soup.reindex(records=[order.order])
