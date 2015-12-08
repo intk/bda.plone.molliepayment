@@ -25,7 +25,7 @@ from collective.sendaspdf.browser.base import BaseView
 from collective.sendaspdf.browser.send import SendForm
 from bda.plone.orders.common import get_bookings_soup
 from zope.component.hooks import getSite
-
+from bda.plone.cart import get_object_by_uid
 from plone import api
 
 from bda.plone.payment import (
@@ -215,9 +215,13 @@ class MolliePaySuccess(BrowserView):
            
             for booking in order.bookings:
                 try:
-                    sku = str(booking.attrs['item_number'])
-                    if not sku or sku == "None":
-                        sku = str(booking.attrs['buyable_uid'])
+                    booking_uid = booking.attrs['buyable_uid']
+                    booking_buyable = get_object_by_uid(self.context, booking_uid)
+                    item_number = getattr(booking_buyable, 'item_number', None)
+                    if item_number:
+                        sku = str(item_number)
+                    else:
+                        sku = str(booking_uid)
 
                     order_bookings.append({
                         'sku':sku,
@@ -248,16 +252,16 @@ class MolliePaySuccess(BrowserView):
                     if order.total > 0:
                         order.order.attrs['email_sent'] = 'yes'
                         orders_soup = get_orders_soup(self.context)
-                        orders_soup.reindex(records=[order.order])
-                        orders_soup.rebuild()
+                        order_record = order.order
+                        orders_soup.reindex(records=[order_record])
                         #payment.succeed(self.request, order_uid, dict(), None)
                 else:
                     if order.order.attrs['email_sent'] == 'yes':
                         order_data['already_sent'] = True
                     order.order.attrs['email_sent'] = 'yes'
                     orders_soup = get_orders_soup(self.context)
-                    orders_soup.reindex(records=[order.order])
-                    orders_soup.rebuild()
+                    order_record = order.order
+                    orders_soup.reindex(records=[order_record])
                 return order_data
             else:
                 return order_data
@@ -305,11 +309,10 @@ class MollieWebhook(BrowserView):
         if mollie_payment.isPaid():
             if order.salaried != ifaces.SALARIED_YES:
                 order.salaried = ifaces.SALARIED_YES
-                order.order.attrs['salaried'] = ifaces.SALARIED_YES
                 order.order.attrs['email_sent'] = 'no'
                 orders_soup = get_orders_soup(self.context)
-                orders_soup.reindex(records=[order.order])
-                orders_soup.rebuild()
+                order_record = order.order
+                orders_soup.reindex(records=[order_record])
                 payment.succeed(self.request, order_uid, dict(), None)
                 return True
 
