@@ -94,7 +94,7 @@ class MolliePay(BrowserView):
 
         # Detect tickets
         context_url = self.context.absolute_url()
-        tickets = '/tickets' in context_url:
+        tickets = '/tickets' in context_url
 
         # Details
         base_url = self.context.absolute_url()
@@ -300,7 +300,7 @@ class MollieWebhook(BrowserView):
         data = self.request.form
 
         context_url = self.context.absolute_url()
-        tickets = '/tickets' in context_url:
+        tickets = '/tickets' in context_url
 
         if 'id' not in data:
             return False
