@@ -17,9 +17,13 @@
 <metal:main fill-slot="main">
   <tal:main-macro metal:define-macro="main">
     
-    <tal:finalize define="finalized view/finalize" />
+    <tal:finalize define="finalized view/finalize;
+                          " />
+
+
     <tal:header
-      tal:define="header_image python: view.get_header_image(tickets)">
+      tal:define="tickets python: 'tickets' in context.absolute_url();
+                  header_image python: view.get_header_image(tickets)">
         
         <div id="cart-page-header" tal:attributes="style python: 'background-image:url(%s)' %(header_image)">
           <h1 class="documentFirstHeading"

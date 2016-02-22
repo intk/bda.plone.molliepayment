@@ -51,7 +51,7 @@ _ = MessageFactory('bda.plone.payment')
 # Mollie Data
 #
 
-testing = False
+testing = True
 
 TEST_API_KEY = "test_aUZkTbRsiUcDnjSX4D7AqvxTp5TKJP"
 LIVE_API_KEY = "live_BndGVkfjTnHuijrMPeKjnpGgV4rL7n"
@@ -91,6 +91,12 @@ class MolliePayment(Payment):
 #
 class MolliePay(BrowserView):
     def __call__(self):
+
+        # Detect tickets
+        context_url = self.context.absolute_url()
+        tickets = '/tickets' in context_url:
+
+        # Details
         base_url = self.context.absolute_url()
         order_uid = self.request['uid']
         bank_id = self.request['bank_id']
@@ -103,7 +109,10 @@ class MolliePay(BrowserView):
         real_amount = float(int(amount)/100.0)
 
         site_url = api.portal.get().absolute_url()
-        webhookUrl = '%s/nl/@@mollie_webhook' %(site_url)
+        if tickets:
+            webhookUrl = '%s/nl/tickets/@@mollie_webhook' %(site_url)
+        else:
+            webhookUrl = '%s/nl/@@mollie_webhook' %(site_url)
         
         #if testing:
         #    #webhookUrl = webhookUrl
@@ -216,8 +225,10 @@ class MolliePaySuccess(BrowserView):
             for booking in order.bookings:
                 try:
                     booking_uid = booking.attrs['buyable_uid']
-                    booking_buyable = get_object_by_uid(self.context, booking_uid)
-                    item_number = getattr(booking_buyable, 'item_number', None)
+                    #booking_buyable = get_object_by_uid(self.context, booking_uid)
+                    #item_number = getattr(booking_buyable, 'item_number', None)
+                    item_number = booking.attrs['item_number']
+
                     if item_number:
                         sku = str(item_number)
                     else:
@@ -287,7 +298,10 @@ class MolliePaySuccess(BrowserView):
 class MollieWebhook(BrowserView):
     def __call__(self):
         data = self.request.form
-        
+
+        context_url = self.context.absolute_url()
+        tickets = '/tickets' in context_url:
+
         if 'id' not in data:
             return False
 
@@ -313,7 +327,18 @@ class MollieWebhook(BrowserView):
                 orders_soup = get_orders_soup(self.context)
                 order_record = order.order
                 orders_soup.reindex(records=[order_record])
-                payment.succeed(self.request, order_uid, dict(), None)
+
+                if tickets:
+                    base_url = self.context.portal_url()
+                    language = self.context.language
+                    params = "?order_id=%s" %(str(order_uid))
+                    download_as_pdf_link = "%s/%s/download_as_pdf?page_url=%s/%s/tickets/etickets%s" %(base_url, language, base_url, language, params)
+                    order_data = {}
+                    order_data['download_link'] = download_as_pdf_link
+
+                    payment.succeed(self.request, order_uid, order_data, download_as_pdf_link)
+                else:
+                    payment.succeed(self.request, order_uid, dict(), None)
                 return True
 
         elif mollie_payment.isPending():
@@ -334,6 +359,7 @@ class MollieWebhook(BrowserView):
 class MolliePayFinalized(BrowserView):
     def verify(self):
         return True
+        
     @property
     def shopmaster_mail(self):
         return shopmaster_mail(self.context)
@@ -365,10 +391,31 @@ class MolliePayFinalized(BrowserView):
 class MolliePayFailed(BrowserView):
     def finalize(self):
         return True
+
     @property
     def shopmaster_mail(self):
         return shopmaster_mail(self.context)
 
+    def get_header_image(self, is_ticket=False):
+        if is_ticket:
+            folder = self.context
+            if folder.portal_type == "Folder":
+                contents = folder.getFolderContents({"portal_type": "Image", "Title":"tickets-header"})
+                if len(contents) > 0:
+                    image = contents[0]
+                    url = image.getURL()
+                    scale_url = "%s/%s" %(url, "@@images/image/large")
+                    return scale_url
+        else:
+            brains = self.context.portal_catalog(Title="webwinkel-header", portal_type="Image")
+            if len(brains) > 0:
+                brain = brains[0]
+                if brain.portal_type == "Image":
+                    url = brain.getURL()
+                    scale_url = "%s/%s" %(url, "@@images/image/large")
+                    return scale_url
+
+            return ""
 
 
 class MollieError(Exception):

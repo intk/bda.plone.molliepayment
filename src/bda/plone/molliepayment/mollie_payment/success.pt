@@ -103,9 +103,6 @@ Binnen enkele minuten ontvangt u een bevestiging van uw bestelling per mail.<br>
             i18n:translate="payment_error">Payment Error</h1>
         </div>
         
-        
-        
-        
         <div class="results-wrapper">
           <div class="wrapper-result-page">
             <p><span i18n:translate="six_payment_verification_failed">
