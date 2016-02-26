@@ -33,10 +33,14 @@
         <div class="results-wrapper">
           <div class="wrapper-result-page">
 
-            <p>
-              Hartelijk bedankt voor uw bestelling!<br>Deze wordt binnen 3-5 dagen via TPG Post verzonden.<br>
-Binnen enkele minuten ontvangt u een bevestiging van uw bestelling per mail.<br>Controleer uw spam en ongewenste e-mail map wanneer u de e-mail niet ontvangen heeft.
-            </p>
+            <div>
+              <p><span>Hartelijk bedankt voor uw bestelling!</span></p>
+              <p tal:condition="not:tickets">
+                Deze wordt binnen 3-5 dagen via TPG Post verzonden.<br>
+                Binnen enkele minuten ontvangt u een bevestiging van uw bestelling per mail.<br>
+                Controleer uw spam en ongewenste e-mail map wanneer u de e-mail niet ontvangen heeft.
+              </p>
+            </div>
 
              <a href="" tal:attributes="href python: order_data['download_link']" 
               class="payment_button" tal:condition="tickets"><i class="fa fa-download"></i>  Download e-ticket(s)</a>
