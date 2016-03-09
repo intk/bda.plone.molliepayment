@@ -234,12 +234,16 @@ class MolliePaySuccess(BrowserView):
                     else:
                         sku = str(booking_uid)
 
+                    item_category = "Product"
+                    if tickets:
+                        item_category = "E-Ticket"
+
                     order_bookings.append({
                         'sku':sku,
                         'name': str(booking.attrs['title']),
                         'price': float(booking.attrs['net']),
                         'quantity': int(booking.attrs['buyable_count']),
-                        'category': 'Product'
+                        'category': item_category
                     })
                 except:
                     pass
