@@ -75,6 +75,7 @@
           <script>
 
             $(document).ready(function() {
+              window.dataLayer = window.dataLayer || [];
               var order_id = $('#order_id').html();
               var order_total = $('#order_total').html();
               var order_shipping = $('#order_shipping').html();
@@ -88,9 +89,9 @@
               dataLayer.push({
                 'event': 'transactionComplete',
                 'transactionId': order_id,
-                'transactionTotal': order_total,
-                'transactionTax': order_tax,
-                'transactionShipping': order_shipping,
+                'transactionTotal': parseFloat(order_total),
+                'transactionTax': parseFloat(order_tax),
+                'transactionShipping': parseFloat(order_shipping),
                 'transactionProducts': order_bookings
               });
             });
