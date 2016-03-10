@@ -71,7 +71,7 @@
           <p id="order_bookings" tal:attributes="data-bookings python:order_data['bookings']"></p>
         </div>
         
-        <tal:send_ga tal:condition="python: order_data['already_sent'] == False">
+        <tal:send_ga>
           <script>
 
             $(document).ready(function() {
