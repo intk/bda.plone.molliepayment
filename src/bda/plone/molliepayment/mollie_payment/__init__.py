@@ -187,6 +187,7 @@ class MolliePaySuccess(BrowserView):
         mollie.setApiKey(API_KEY)
 
         order_nr = None
+        order_uid = None
         if 'order_id' in data:
             order_nr = data['order_id']
         
@@ -202,7 +203,13 @@ class MolliePaySuccess(BrowserView):
         if order_nr != None and order_uid_param == None:
             order_uid = IPaymentData(self.context).uid_for(order_nr)
         
-        if order_uid != None:
+        order = None
+        try:
+            order = OrderData(self.context, uid=order_uid)
+        except:
+            order = None
+
+        if order_uid != None and order != None:
             order = OrderData(self.context, uid=order_uid)
             order_nr = order.order.attrs['ordernumber']
 

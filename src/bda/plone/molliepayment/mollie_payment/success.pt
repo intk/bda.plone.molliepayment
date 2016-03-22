@@ -34,7 +34,8 @@
           <div class="wrapper-result-page">
 
             <div>
-              <p><span>Hartelijk bedankt voor uw bestelling!</span></p>
+              <p><span>Hartelijk bedankt voor je bestelling!</span></p>
+
               <p tal:condition="not:tickets">
                 Deze wordt binnen 3-5 dagen via TPG Post verzonden.<br>
                 Binnen enkele minuten ontvangt u een bevestiging van uw bestelling per mail.<br>
@@ -45,13 +46,14 @@
              <a href="" tal:attributes="href python: order_data['download_link']" 
               class="payment_button" tal:condition="tickets"><i class="fa fa-download"></i>  Download e-ticket(s)</a>
 
+
             <div class="ticket-information" tal:condition="python: tickets and order_data['ordernumber'] != ''">
               <p i18n:translate="order_number_text" id="ordernumber_order_text">
-                Uw boeking (ordernummer: <strong tal:content="python: order_data['ordernumber']"></strong>) is met succes afgerond.
+                Je bestelling (ordernummer: <strong tal:content="python: order_data['ordernumber']"></strong>) is met succes afgerond.
               </p>
-              <p i18n:translate="spam_order_message" id="spam_order_message">
-                Binnen enkele minuten ontvangt u de boekingsbevestiging met een link naar uw e-tickets.
-                Controleer uw spam en ongewenste e-mail map wanneer u de e-mail niet ontvangen heeft.
+              <p id="spam_order_message">
+                Binnen enkele minuten ontvang je de bestellingsbevestiging met een link naar je e-ticket(s).
+                Controleer je spam en ongewenste e-mail map wanneer je de e-mail niet ontvangen hebt.
               </p>
             </div>
           </div>
@@ -111,14 +113,13 @@
         <div class="results-wrapper">
           <div class="wrapper-result-page">
             <p><span i18n:translate="six_payment_verification_failed">
-              Something nasty is going on. Payment verification failed.
-              If you think the failure remains on our side, please contact
+              Er is iets mis gegaan. De betalingsverificatie is mislukt. Probeer het nog eens of neem contact met ons op als je denkt dat de fout bij ons ligt.
             </span></p>
             <p>
               <a href="mailto:shopmaster@example.com"
               style="text-decoration:underline;"
                tal:attributes="href string:mailto:${view/shopmaster_mail}"
-               >Contact <span i18n:translate="us">us</span></a>
+               >Neem contact op</a>
              </p>
           
           </div>
