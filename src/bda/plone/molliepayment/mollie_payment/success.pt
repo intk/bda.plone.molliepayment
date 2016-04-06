@@ -52,7 +52,7 @@
                 Je bestelling (ordernummer: <strong tal:content="python: order_data['ordernumber']"></strong>) is met succes afgerond.
               </p>
               <p id="spam_order_message">
-                Binnen enkele minuten ontvang je de bestellingsbevestiging met een link naar je e-ticket(s).
+                Binnen enkele minuten ontvang je de bestellingsbevestiging met je e-ticket(s) in de bijlage.
                 Controleer je spam en ongewenste e-mail map wanneer je de e-mail niet ontvangen hebt.
               </p>
             </div>
