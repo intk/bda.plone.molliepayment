@@ -34,12 +34,12 @@
           <div class="wrapper-result-page">
 
             <div>
-              <p><span>Hartelijk bedankt voor je bestelling!</span></p>
+              <p><span i18n:translate="">Thank you very much for your order!</span></p>
 
               <p tal:condition="not:tickets">
-                Deze wordt binnen 3-5 dagen via TPG Post verzonden.<br>
-                Binnen enkele minuten ontvangt u een bevestiging van uw bestelling per mail.<br>
-                Controleer uw spam en ongewenste e-mail map wanneer u de e-mail niet ontvangen heeft.
+                <span i18n:translate="">Deze wordt binnen 3-5 dagen via TPG Post verzonden.</span><br>
+                <span i18n:translate="">Within minutes you will receive a confirmation of your order by email.</span><br>
+                <span i18n:translate="">Please check your spam and junk email folder if you have not received the email.</span>
               </p>
             </div>
 
@@ -49,11 +49,11 @@
 
             <div class="ticket-information" tal:condition="python: tickets and order_data['ordernumber'] != ''">
               <p i18n:translate="order_number_text" id="ordernumber_order_text">
-                Je bestelling (ordernummer: <strong tal:content="python: order_data['ordernumber']"></strong>) is met succes afgerond.
+                <span i18n:translate="">Your order (order number:</span> <strong tal:content="python: order_data['ordernumber']"></strong>) <span i18n:translate="">was completed successfully.</span>
               </p>
               <p id="spam_order_message">
-                Binnen enkele minuten ontvang je de bestellingsbevestiging met je e-ticket(s) in de bijlage.
-                Controleer je spam en ongewenste e-mail map wanneer je de e-mail niet ontvangen hebt.
+                <span i18n:translate="">Within minutes you will receive the order confirmation with your e-ticket (s) in attachment.e.</span>
+                <span i18n:translate="">Please check your spam and junk email folder if you have not received the email.</span>
               </p>
             </div>
           </div>
@@ -119,7 +119,7 @@
               <a href="mailto:shopmaster@example.com"
               style="text-decoration:underline;"
                tal:attributes="href string:mailto:${view/shopmaster_mail}"
-               >Neem contact op</a>
+               i18n:translate="">Contact</a>
              </p>
           
           </div>
