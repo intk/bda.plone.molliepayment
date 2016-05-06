@@ -110,7 +110,8 @@ class MolliePay(BrowserView):
 
         site_url = api.portal.get().absolute_url()
         if tickets:
-            webhookUrl = '%s/nl/tickets/@@mollie_webhook' %(site_url)
+            language = self.context.language
+            webhookUrl = '%s/%s/tickets/@@mollie_webhook' %(site_url, language)
         else:
             webhookUrl = '%s/nl/@@mollie_webhook' %(site_url)
         
