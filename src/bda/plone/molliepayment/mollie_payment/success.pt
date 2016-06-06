@@ -107,19 +107,24 @@
         
         <div id="cart-page-header" tal:attributes="style python: 'background-image:url(%s)' %(header_image)">
           <h1 class="documentFirstHeading"
-            i18n:translate="payment_error">Payment Error</h1>
+            i18n:translate="payment_error">Something went wrong</h1>
         </div>
         
         <div class="results-wrapper">
           <div class="wrapper-result-page">
-            <p><span i18n:translate="six_payment_verification_failed">
-              Er is iets mis gegaan. De betalingsverificatie is mislukt. Probeer het nog eens of neem contact met ons op als je denkt dat de fout bij ons ligt.
-            </span></p>
+            <p>
+              <span i18n:translate="six_payment_verification_failed" tal:condition="not:tickets">
+                Er is iets mis gegaan. De betalingsverificatie is mislukt. Probeer het nog eens of neem contact met ons op als je denkt dat de fout bij ons ligt.
+              </span>
+              <span i18n:translate="six_payment_verification_failed" tal:condition="tickets">
+                Oops, something went wrong. Your tickets have not been payed because the payment verification failed. We're sorry for the inconvenience. Please try again to order your tickets, or contact us if you think the problem is on our side:
+              </span>
+            </p>
             <p>
               <a href="mailto:shopmaster@example.com"
               style="text-decoration:underline;"
                tal:attributes="href string:mailto:${view/shopmaster_mail}"
-               i18n:translate="">Contact</a>
+               i18n:translate="">Contact us</a>
              </p>
           
           </div>
