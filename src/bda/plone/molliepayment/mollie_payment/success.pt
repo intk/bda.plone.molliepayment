@@ -52,7 +52,7 @@
                 <span i18n:translate="">Your order (order number:</span> <strong tal:content="python: order_data['ordernumber']"></strong>) <span i18n:translate="">was completed successfully.</span>
               </p>
               <p id="spam_order_message">
-                <span i18n:translate="">Within minutes you will receive the order confirmation with your e-ticket (s) in attachment.</span>
+                <span i18n:translate="">Within minutes you will receive an email with the order confirmation and your e-ticket(s) in the attachment. P</span>
                 <span i18n:translate="">Please check your spam and junk email folder if you have not received the email.</span>
               </p>
             </div>
