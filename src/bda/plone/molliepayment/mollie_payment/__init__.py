@@ -334,8 +334,13 @@ class MollieWebhook(BrowserView):
 
         if mollie_payment.isPaid():
             if order.salaried != ifaces.SALARIED_YES:
+                # XXX: currently we need to delete attribute before setting to a new
+                #      value in order to persist change. fix in appropriate place.
+                del order.order.attrs['salaried']
+                order.order.attrs['salaried'] = ifaces.SALARIED_YES
                 order.salaried = ifaces.SALARIED_YES
                 order.order.attrs['email_sent'] = 'no'
+                
                 orders_soup = get_orders_soup(self.context)
                 order_record = order.order
                 orders_soup.reindex(records=[order_record])
