@@ -96,6 +96,20 @@
                 'transactionShipping': parseFloat(order_shipping),
                 'transactionProducts': order_bookings
               });
+
+              dataLayer.push({
+                'ecommerce': {
+                  'purchase': {
+                    'actionField': {
+                      'id':order_id,
+                      'revenue':order_total,
+                      'tax':order_tax,
+                      'shipping':order_shipping
+                    },
+                    'products':order_bookings
+                  }
+                }
+              });
             });
             
           </script>
