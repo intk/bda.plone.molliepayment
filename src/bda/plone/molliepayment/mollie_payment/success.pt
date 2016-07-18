@@ -92,8 +92,13 @@
                 'event': 'transactionComplete',
                 'ecommerce': {
                   'purchase': {
-                    'actionField': '',
-                    'products':order_bookings
+                    'actionField': {
+                      'id': order_id,
+                      'revenue': order_total,
+                      'tax': order_tax,
+                      'shipping': order_shipping
+                    },
+                    'products': order_bookings
                   }
                 }
               });
