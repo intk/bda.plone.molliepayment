@@ -248,7 +248,7 @@ class MolliePaySuccess(BrowserView):
 
                     order_bookings.append({
                         'id':sku,
-                        'price': float(booking.attrs['net']),
+                        'price': str(float(booking.attrs['net'])),
                         'name': str(booking.attrs['title']),
                         'category': item_category,
                         'quantity': int(booking.attrs['buyable_count']),
