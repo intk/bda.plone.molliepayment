@@ -217,10 +217,10 @@ class MolliePaySuccess(BrowserView):
             order_data = {  
                 "ordernumber": str(order_nr),
                 "order_id": str(order_uid),
-                "total": order.total,
-                "shipping": order.shipping,
+                "total": str(order.total),
+                "shipping": str(order.shipping),
                 "currency": str(order.currency),
-                "tax": order.vat,
+                "tax": str(order.vat),
                 "ticket": tickets,
                 "download_link": None,
                 "verified": False,
@@ -247,11 +247,11 @@ class MolliePaySuccess(BrowserView):
                         item_category = "E-Ticket"
 
                     order_bookings.append({
-                        'sku':sku,
+                        'id':sku,
+                        'price': str(float(booking.attrs['net'])),
                         'name': str(booking.attrs['title']),
-                        'price': float(booking.attrs['net']),
+                        'category': item_category,
                         'quantity': int(booking.attrs['buyable_count']),
-                        'category': item_category
                     })
                 except:
                     pass
