@@ -100,12 +100,7 @@
               dataLayer.push({
                 'ecommerce': {
                   'purchase': {
-                    'actionField': {
-                      'id':order_id,
-                      'revenue':parseFloat(order_total),
-                      'tax':parseFloat(order_tax),
-                      'shipping'parseFloat(order_shipping)
-                    },
+                    'actionField': '',
                     'products':order_bookings
                   }
                 }
