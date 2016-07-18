@@ -88,16 +88,16 @@
 
               var order_bookings = $.parseJSON($('#order_bookings').attr('data-bookings'));
 
-              /*dataLayer.push({
+              dataLayer.push({
                 'event': 'transactionComplete',
                 'transactionId': order_id,
                 'transactionTotal': parseFloat(order_total),
                 'transactionTax': parseFloat(order_tax),
                 'transactionShipping': parseFloat(order_shipping),
                 'transactionProducts': order_bookings
-              });*/
+              });
 
-              dataLayer.push({
+              /*dataLayer.push({
                 'event': 'transactionComplete',
                 'ecommerce': {
                   'purchase': {
@@ -105,7 +105,7 @@
                     'products':order_bookings
                   }
                 }
-              });
+              });*/
             });
             
           </script>
