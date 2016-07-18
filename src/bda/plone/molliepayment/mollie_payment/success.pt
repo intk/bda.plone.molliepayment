@@ -102,9 +102,9 @@
                   'purchase': {
                     'actionField': {
                       'id':order_id,
-                      'revenue':order_total,
-                      'tax':order_tax,
-                      'shipping':order_shipping
+                      'revenue':parseFloat(order_total),
+                      'tax':parseFloat(order_tax),
+                      'shipping'parseFloat(order_shipping)
                     },
                     'products':order_bookings
                   }
