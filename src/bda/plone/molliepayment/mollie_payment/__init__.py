@@ -168,13 +168,25 @@ class MolliePaySuccess(BrowserView):
     def get_header_image(self, ticket):
         if ticket:
             folder = self.context
-            if folder.portal_type == "Folder":
-                contents = folder.getFolderContents({"portal_type": "Image", "Title":"tickets-header"})
-                if len(contents) > 0:
-                    image = contents[0]
-                    url = image.getURL()
-                    scale_url = "%s/%s" %(url, "@@images/image/large")
-                    return scale_url
+            if folder.portal_type in ["Folder", "Event"]:
+                if folder.portal_type == "Event":
+                    uuid = folder.UID()
+                    brain = uuidToCatalogBrain(uuid)
+                    if brain:
+                        leadmedia = getattr(brain, 'leadMedia', None)
+                        if leadmedia:
+                            image = uuidToCatalogBrain(leadmedia)
+                            if hasattr(image, 'getURL'):
+                                url = image.getURL()
+                                scale_url = "%s/%s" %(url, "@@images/image/large")
+                                return scale_url
+                else:
+                    contents = folder.getFolderContents({"portal_type": "Image", "Title":"tickets-header"})
+                    if len(contents) > 0:
+                        image = contents[0]
+                        url = image.getURL()
+                        scale_url = "%s/%s" %(url, "@@images/image/large")
+                        return scale_url
         else:
             brains = self.context.portal_catalog(Title="webwinkel-header", portal_type="Image")
             if len(brains) > 0:
@@ -406,13 +418,25 @@ class MolliePayFinalized(BrowserView):
     def get_header_image(self, ticket=False):
         if ticket:
             folder = self.context
-            if folder.portal_type == "Folder":
-                contents = folder.getFolderContents({"portal_type": "Image", "Title":"tickets-header"})
-                if len(contents) > 0:
-                    image = contents[0]
-                    url = image.getURL()
-                    scale_url = "%s/%s" %(url, "@@images/image/large")
-                    return scale_url
+            if folder.portal_type in ["Folder", "Event"]:
+                if folder.portal_type == "Event":
+                    uuid = folder.UID()
+                    brain = uuidToCatalogBrain(uuid)
+                    if brain:
+                        leadmedia = getattr(brain, 'leadMedia', None)
+                        if leadmedia:
+                            image = uuidToCatalogBrain(leadmedia)
+                            if hasattr(image, 'getURL'):
+                                url = image.getURL()
+                                scale_url = "%s/%s" %(url, "@@images/image/large")
+                                return scale_url
+                else:
+                    contents = folder.getFolderContents({"portal_type": "Image", "Title":"tickets-header"})
+                    if len(contents) > 0:
+                        image = contents[0]
+                        url = image.getURL()
+                        scale_url = "%s/%s" %(url, "@@images/image/large")
+                        return scale_url
         else:
             brains = self.context.portal_catalog(Title="webwinkel-header", portal_type="Image")
             if len(brains) > 0:
@@ -442,13 +466,25 @@ class MolliePayFailed(BrowserView):
     def get_header_image(self, ticket=False):
         if ticket:
             folder = self.context
-            if folder.portal_type == "Folder":
-                contents = folder.getFolderContents({"portal_type": "Image", "Title":"tickets-header"})
-                if len(contents) > 0:
-                    image = contents[0]
-                    url = image.getURL()
-                    scale_url = "%s/%s" %(url, "@@images/image/large")
-                    return scale_url
+            if folder.portal_type in ["Folder", "Event"]:
+                if folder.portal_type == "Event":
+                    uuid = folder.UID()
+                    brain = uuidToCatalogBrain(uuid)
+                    if brain:
+                        leadmedia = getattr(brain, 'leadMedia', None)
+                        if leadmedia:
+                            image = uuidToCatalogBrain(leadmedia)
+                            if hasattr(image, 'getURL'):
+                                url = image.getURL()
+                                scale_url = "%s/%s" %(url, "@@images/image/large")
+                                return scale_url
+                else:
+                    contents = folder.getFolderContents({"portal_type": "Image", "Title":"tickets-header"})
+                    if len(contents) > 0:
+                        image = contents[0]
+                        url = image.getURL()
+                        scale_url = "%s/%s" %(url, "@@images/image/large")
+                        return scale_url
         else:
             brains = self.context.portal_catalog(Title="webwinkel-header", portal_type="Image")
             if len(brains) > 0:
