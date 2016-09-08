@@ -48,6 +48,7 @@ _ = MessageFactory('bda.plone.payment')
 
 
 from bda.plone.shop.utils import is_ticket as is_context_ticket
+from plone.app.uuid import uuidToCatalogBrain
 
 #
 # Mollie Data
