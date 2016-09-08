@@ -47,15 +47,19 @@ logger = logging.getLogger('bda.plone.payment')
 _ = MessageFactory('bda.plone.payment')
 
 
+from bda.plone.shop.utils import is_ticket as is_context_ticket
+
 #
 # Mollie Data
 #
 
 testing = True
 
+# TODO: get keys from a settings interface
 TEST_API_KEY = "test_aUZkTbRsiUcDnjSX4D7AqvxTp5TKJP"
 LIVE_API_KEY = "live_BndGVkfjTnHuijrMPeKjnpGgV4rL7n"
 
+# Switch keys
 API_KEY = LIVE_API_KEY
 if testing:
     API_KEY = TEST_API_KEY
@@ -92,9 +96,10 @@ class MolliePayment(Payment):
 class MolliePay(BrowserView):
     def __call__(self):
 
-        # Detect tickets
+        # Detect tickets interface
+        # TODO: Detect if tickets for an Event
         context_url = self.context.absolute_url()
-        tickets = '/tickets' in context_url
+        tickets = is_context_ticket(self.context)
 
         # Details
         base_url = self.context.absolute_url()
@@ -134,6 +139,7 @@ class MolliePay(BrowserView):
                     'method': payment_type
                 })
             else:
+                # iDeal
                 payment = mollie.payments.create({
                     'amount':real_amount, 
                     'description':str(ordernumber), 
@@ -180,15 +186,15 @@ class MolliePaySuccess(BrowserView):
         data = self.request.form
         context_url = self.context.absolute_url()
 
-        tickets = False
-        if '/tickets' in context_url:
-            tickets = True
+        tickets = is_context_ticket(self.context)
 
         mollie = Mollie.API.Client()
         mollie.setApiKey(API_KEY)
 
         order_nr = None
         order_uid = None
+
+        # Switch between order_id or order_uid in the url
         if 'order_id' in data:
             order_nr = data['order_id']
         
@@ -200,20 +206,24 @@ class MolliePaySuccess(BrowserView):
             order_uid = order_uid_param
             order_nr = order_uid_param
 
+        # Get payment
         payment = Payments(self.context).get('mollie_payment')
         if order_nr != None and order_uid_param == None:
             order_uid = IPaymentData(self.context).uid_for(order_nr)
         
+        # Get order
         order = None
         try:
             order = OrderData(self.context, uid=order_uid)
         except:
             order = None
 
+        # Check if order exists
         if order_uid != None and order != None:
             order = OrderData(self.context, uid=order_uid)
             order_nr = order.order.attrs['ordernumber']
 
+            # Build order data
             order_data = {  
                 "ordernumber": str(order_nr),
                 "order_id": str(order_uid),
@@ -242,7 +252,7 @@ class MolliePaySuccess(BrowserView):
                     else:
                         sku = str(booking_uid)
 
-                    item_category = "Product"
+                    item_category = "Product" # Default category
                     if tickets:
                         item_category = "E-Ticket"
 
@@ -259,9 +269,11 @@ class MolliePaySuccess(BrowserView):
             try:
                 order_data['bookings'] = json.dumps(order_bookings)
             except:
+                # Invalid JSON format
                 order_data['bookings'] = json.dumps([])
 
             # Generate download link
+            # TODO: Download link is deprecated. It is now crated when the ticket PDF is going to be generated bda.plone.orders
             if tickets:
                 base_url = self.context.portal_url()
                 language = self.context.language
@@ -270,6 +282,7 @@ class MolliePaySuccess(BrowserView):
                 order_data['download_link'] = download_as_pdf_link
 
             if order.salaried == ifaces.SALARIED_YES:
+                # Payment succeded
                 order_data['verified'] = True
                 if order.order.attrs['email_sent'] == 'no':
                     if order.total > 0:
@@ -289,6 +302,8 @@ class MolliePaySuccess(BrowserView):
             else:
                 return order_data
         else:
+            # Order doesn't exist in the database
+            # return blank ticket
             order_data = {
                 "order_id": "",
                 "total": "",
@@ -312,7 +327,7 @@ class MollieWebhook(BrowserView):
         data = self.request.form
 
         context_url = self.context.absolute_url()
-        tickets = '/tickets' in context_url
+        tickets = is_context_ticket(self.context)
 
         if 'id' not in data:
             return False
@@ -330,6 +345,7 @@ class MollieWebhook(BrowserView):
             order_uid = IPaymentData(self.context).uid_for(order_nr)
             order = OrderData(self.context, uid=order_uid)
         except:
+            # Cannot get the payment with the mentioned id
             return False
 
         if mollie_payment.isPaid():
@@ -343,13 +359,13 @@ class MollieWebhook(BrowserView):
                 transaction.get().commit()
 
                 if tickets:
+                    # Send download link : This is deprecated
                     base_url = self.context.portal_url()
                     language = self.context.language
                     params = "?order_id=%s" %(str(order_uid))
                     download_as_pdf_link = "%s/%s/download_as_pdf?page_url=%s/%s/tickets/etickets%s" %(base_url, language, base_url, language, params)
                     order_data = {}
                     order_data['download_link'] = download_as_pdf_link
-
                     payment.succeed(self.request, order_uid, order_data, download_as_pdf_link)
                 else:
                     payment.succeed(self.request, order_uid, dict(), None)
@@ -360,6 +376,7 @@ class MollieWebhook(BrowserView):
         elif mollie_payment.isOpen():
             return False
         else:
+            # Payment Fails
             payment.failed(self.context, order_uid)
             return False
 
