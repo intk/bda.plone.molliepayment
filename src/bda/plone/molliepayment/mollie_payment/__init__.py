@@ -161,8 +161,12 @@ class MolliePay(BrowserView):
 # Payment success
 #
 class MolliePaySuccess(BrowserView):
-    def get_header_image(self, is_ticket):
-        if is_ticket:
+    def is_ticket(self):
+        result = is_context_ticket(self.context)
+        return result
+
+    def get_header_image(self, ticket):
+        if ticket:
             folder = self.context
             if folder.portal_type == "Folder":
                 contents = folder.getFolderContents({"portal_type": "Image", "Title":"tickets-header"})
@@ -395,8 +399,12 @@ class MolliePayFinalized(BrowserView):
     def shopmaster_mail(self):
         return shopmaster_mail(self.context)
 
-    def get_header_image(self, is_ticket=False):
-        if is_ticket:
+    def is_ticket(self):
+        result = is_context_ticket(self.context)
+        return result
+
+    def get_header_image(self, ticket=False):
+        if ticket:
             folder = self.context
             if folder.portal_type == "Folder":
                 contents = folder.getFolderContents({"portal_type": "Image", "Title":"tickets-header"})
@@ -427,8 +435,12 @@ class MolliePayFailed(BrowserView):
     def shopmaster_mail(self):
         return shopmaster_mail(self.context)
 
-    def get_header_image(self, is_ticket=False):
-        if is_ticket:
+    def is_ticket(self):
+        result = is_context_ticket(self.context)
+        return result
+
+    def get_header_image(self, ticket=False):
+        if ticket:
             folder = self.context
             if folder.portal_type == "Folder":
                 contents = folder.getFolderContents({"portal_type": "Image", "Title":"tickets-header"})

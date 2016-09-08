@@ -22,7 +22,7 @@
 
 
     <tal:header
-      tal:define="tickets python: 'tickets' in context.absolute_url();
+      tal:define="tickets python: view.is_ticket();
                   header_image python: view.get_header_image(tickets)">
         
         <div id="cart-page-header" tal:attributes="style python: 'background-image:url(%s)' %(header_image)">

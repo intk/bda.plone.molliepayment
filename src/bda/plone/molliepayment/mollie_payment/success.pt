@@ -20,7 +20,7 @@
     <tal:block define="order_data view/verify;
                       verified python:order_data['verified'];
                       ticket python:order_data['ticket'];
-                      tickets python: 'tickets' in context.absolute_url();
+                      tickets python: view.is_ticket();
                       header_image python: view.get_header_image(tickets)">
       
       <tal:verified condition="verified">
