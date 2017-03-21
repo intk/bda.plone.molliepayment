@@ -21,8 +21,8 @@ from bda.plone.orders import interfaces as ifaces
 from bda.plone.orders.common import OrderData
 from bda.plone.orders.common import get_order
 import transaction
-from collective.sendaspdf.browser.base import BaseView
-from collective.sendaspdf.browser.send import SendForm
+#from collective.sendaspdf.browser.base import BaseView
+#from collective.sendaspdf.browser.send import SendForm
 from bda.plone.orders.common import get_bookings_soup
 from zope.component.hooks import getSite
 from bda.plone.cart import get_object_by_uid
@@ -35,9 +35,9 @@ from bda.plone.payment import (
 
 from ZTUtils import make_query
 from bda.plone.orders.common import get_order
-from security import easyidealSignature
-from easyideal import EasyIdeal
-from easyideal import ReturnValidator
+#from security import easyidealSignature
+#from easyideal import EasyIdeal
+#from easyideal import ReturnValidator
 from decimal import Decimal as D
 
 import json
@@ -47,8 +47,11 @@ logger = logging.getLogger('bda.plone.payment')
 _ = MessageFactory('bda.plone.payment')
 
 
-from bda.plone.shop.utils import is_ticket as is_context_ticket
+#from bda.plone.shop.utils import is_ticket as is_context_ticket
 from plone.app.uuid.utils import uuidToCatalogBrain
+
+def is_context_ticket(context):
+    return False
 
 #
 # Mollie Data
@@ -88,7 +91,7 @@ class MolliePayment(Payment):
     pid = 'mollie_payment'
     label = _('mollie_payment', 'Mollie Payment')
 
-    def init_url(self, uid, bank_id, payment_type):
+    def init_url(self, uid, bank_id='ideal_TESTNL99', payment_type='ideal'):
         return '%s/@@mollie_payment?uid=%s&bank_id=%s&payment=%s' % (self.context.absolute_url(), uid, bank_id, payment_type)
 
 # 
@@ -119,7 +122,7 @@ class MolliePay(BrowserView):
             language = self.context.language
             webhookUrl = '%s/%s/tickets/@@mollie_webhook' %(site_url, language)
         else:
-            webhookUrl = '%s/nl/@@mollie_webhook' %(site_url)
+            webhookUrl = '%s/@@mollie_webhook' %(site_url)
         
         #if testing:
         #    #webhookUrl = webhookUrl
@@ -385,7 +388,7 @@ class MollieWebhook(BrowserView):
                     order_data['download_link'] = download_as_pdf_link
                     payment.succeed(self.request, order_uid, order_data, download_as_pdf_link)
                 else:
-                    payment.succeed(self.request, order_uid, dict(), None)
+                    payment.succeed(self.request, order_uid)
                 return True
 
         elif mollie_payment.isPending():

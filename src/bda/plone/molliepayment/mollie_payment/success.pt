@@ -35,12 +35,6 @@
 
             <div>
               <p><span i18n:translate="">Thank you very much for your order!</span></p>
-
-              <p tal:condition="not:tickets">
-                <span i18n:translate="">Deze wordt binnen 3-5 dagen via TPG Post verzonden.</span><br>
-                <span i18n:translate="">Within minutes you will receive a confirmation of your order by email.</span><br>
-                <span i18n:translate="">Please check your spam and junk email folder if you have not received the email.</span>
-              </p>
             </div>
 
              <a href="" tal:attributes="href python: order_data['download_link']" 
