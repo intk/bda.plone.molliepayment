@@ -47,11 +47,9 @@ logger = logging.getLogger('bda.plone.payment')
 _ = MessageFactory('bda.plone.payment')
 
 
-#from bda.plone.shop.utils import is_ticket as is_context_ticket
+from bda.plone.cart import is_ticket as is_context_ticket
 from plone.app.uuid.utils import uuidToCatalogBrain
 
-def is_context_ticket(context):
-    return False
 
 #
 # Mollie Data
@@ -71,8 +69,11 @@ if testing:
 # Util functions
 #
 def shopmaster_mail(context):
-    props = getToolByName(context, 'portal_properties')
-    return props.site_properties.email_from_address
+    try:
+        props = getToolByName(context, 'portal_properties')
+        return props.site_properties.email_from_address
+    except:
+        return "info@teylersmuseum.nl"
 
 def get_banks():
     mollie = Mollie.API.Client()
@@ -123,7 +124,7 @@ class MolliePay(BrowserView):
             webhookUrl = '%s/%s/tickets/@@mollie_webhook' %(site_url, language)
         else:
             webhookUrl = '%s/@@mollie_webhook' %(site_url)
-        
+
         #if testing:
         #    #webhookUrl = webhookUrl
 
@@ -165,6 +166,10 @@ class MolliePay(BrowserView):
 # Payment success
 #
 class MolliePaySuccess(BrowserView):
+    
+    def shopmaster_mail(self):
+        return shopmaster_mail(self.context)
+
     def is_ticket(self):
         result = is_context_ticket(self.context)
         return result
@@ -337,9 +342,7 @@ class MolliePaySuccess(BrowserView):
 
             return order_data
 
-    @property
-    def shopmaster_mail(self):
-        return shopmaster_mail(self.context)
+    
  
 
 class MollieWebhook(BrowserView):
@@ -379,14 +382,7 @@ class MollieWebhook(BrowserView):
                 transaction.get().commit()
 
                 if tickets:
-                    # Send download link : This is deprecated
-                    base_url = self.context.portal_url()
-                    language = self.context.language
-                    params = "?order_id=%s" %(str(order_uid))
-                    download_as_pdf_link = "%s/%s/download_as_pdf?page_url=%s/%s/tickets/etickets%s" %(base_url, language, base_url, language, params)
-                    order_data = {}
-                    order_data['download_link'] = download_as_pdf_link
-                    payment.succeed(self.request, order_uid, order_data, download_as_pdf_link)
+                    payment.succeed(self.request, order_uid)
                 else:
                     payment.succeed(self.request, order_uid)
                 return True

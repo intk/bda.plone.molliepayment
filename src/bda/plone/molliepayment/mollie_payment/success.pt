@@ -4,7 +4,7 @@
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
       lang="en"
       metal:use-macro="here/main_template/macros/master"
-      i18n:domain="bda.plone.payment">
+      i18n:domain="bda.plone.cart">
 
 <head>
   <metal:top fill-slot="top_slot">
@@ -27,33 +27,50 @@
         
         <div id="cart-page-header" tal:attributes="style python: 'background-image:url(%s)' %(header_image)">
           <h1 class="documentFirstHeading"
-              i18n:translate="payment_success">Payment Success</h1>
+              i18n:translate="payment_success">Bestelling is succesvol afgerond</h1>
         </div>
         
         <div class="results-wrapper">
           <div class="wrapper-result-page">
 
             <div>
-              <p><span i18n:translate="">Thank you very much for your order!</span></p>
+              <p><span i18n:translate="thanks_order">Hartelijk bedankt voor je bestelling!</span></p>
             </div>
 
-             <a href="" tal:attributes="href python: order_data['download_link']" 
-              class="payment_button" tal:condition="tickets"><i class="fa fa-download"></i>  Download e-ticket(s)</a>
+             <a href="" type="submit" tal:attributes="href python: order_data['download_link']" 
+              class="payment_button" tal:condition="tickets"><i class="fa fa-download"></i> Download e-ticket(s)</a>
 
 
             <div class="ticket-information" tal:condition="python: tickets and order_data['ordernumber'] != ''">
+            <p><br></p>
               <p i18n:translate="order_number_text" id="ordernumber_order_text">
-                <span i18n:translate="">Your order (order number:</span> <strong tal:content="python: order_data['ordernumber']"></strong>) <span i18n:translate="">was completed successfully.</span>
+                <span i18n:translate="your_order">Je bestelling</span><span> (</span><span i18n:translate="ordernumber">ordernummer</span>: <strong tal:content="python: order_data['ordernumber']"></strong>) <span i18n:translate="order_success">is met succes afgerond.</span>
               </p>
               <p id="spam_order_message">
-                <span i18n:translate="">Within minutes you will receive an email with the order confirmation and your e-ticket(s) in the attachment.</span>
-                <span i18n:translate="">Please check your spam and junk email folder if you have not received the email.</span>
+                <span i18n:translate="email_confirmation">Binnen enkele minuten ontvang je een e-mail met bestellingsbevestiging en je e-ticket(s) in de bijlage.</span>
+                <span i18n:translate="check_spam">Controleer je spam en ongewenste e-mail map wanneer je de e-mail niet ontvangen hebt.</span>
               </p>
             </div>
           </div>
           <div class="download-btn">
             
           </div>
+
+          <!--<div id="sponsors-wrapper">
+            <div class="row">
+              <div class="col-xs-3"><img src="/Plone/nl/tickets/logos/1-bgl-logo.jpg"/></div>
+              <div class="col-xs-3"><img src="/Plone/nl/tickets/logos/2-ministerie-cultuur.png"/></div>
+              <div class="col-xs-3"><img src="/Plone/nl/tickets/logos/3-rijksdienst.png"/></div>
+              <div class="col-xs-3"><img src="/Plone/nl/tickets/logos/4-noord-holland.jpg"/></div>
+            </div>
+            <div class="row">
+              <div class="col-xs-3"><img src="/Plone/nl/tickets/logos/5-gemeente-haarlem.jpg"/></div>
+              <div class="col-xs-3"></div>
+              <div class="col-xs-3"></div>
+              <div class="col-xs-3"></div>
+              <div class="col-xs-3"></div>
+            </div>
+          </div>-->
         </div>
 
         <div id="order-data" style="display:none">
@@ -68,8 +85,7 @@
         </div>
         
         <tal:send_ga>
-          <script>
-
+          <script type="text/javascript">
             $(document).ready(function() {
               window.dataLayer = window.dataLayer || [];
               var order_id = $('#order_id').html();
@@ -97,7 +113,6 @@
                 }
               });
             });
-            
           </script>
         </tal:send_ga>
 
@@ -107,26 +122,21 @@
         
         <div id="cart-page-header" tal:attributes="style python: 'background-image:url(%s)' %(header_image)">
           <h1 class="documentFirstHeading"
-            i18n:translate="payment_error">Something went wrong</h1>
+            i18n:translate="payment_error">Er is iets mis gegaan</h1>
         </div>
         
         <div class="results-wrapper">
           <div class="wrapper-result-page">
             <p>
-              <span i18n:translate="six_payment_verification_failed" tal:condition="not:tickets">
+              <span i18n:translate="verification_failed">
                 Er is iets mis gegaan. De betalingsverificatie is mislukt. Probeer het nog eens of neem contact met ons op als je denkt dat de fout bij ons ligt.
-              </span>
-              <span i18n:translate="six_payment_verification_failed" tal:condition="tickets">
-                Oops, something went wrong. Your tickets have not been payed because the payment verification failed. We're sorry for the inconvenience. Please try again to order your tickets, or contact us if you think the problem is on our side:
               </span>
             </p>
             <p>
-              <a href="mailto:shopmaster@example.com"
-              style="text-decoration:underline;"
-               tal:attributes="href string:mailto:${view/shopmaster_mail}"
-               i18n:translate="">Contact us</a>
-             </p>
-          
+              <a href="#" tal:attributes="href string:mailto:${view/shopmaster_mail}"
+                i18n:translate="contact_us">Neem contact op</a>
+            </p>
+            
           </div>
         </div>
       

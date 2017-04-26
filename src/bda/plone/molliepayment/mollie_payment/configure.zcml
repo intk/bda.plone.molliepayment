@@ -1,5 +1,7 @@
 <configure xmlns="http://namespaces.zope.org/zope"
-           xmlns:browser="http://namespaces.zope.org/browser">
+           xmlns:browser="http://namespaces.zope.org/browser"
+           xmlns:zcml="http://namespaces.zope.org/zcml"
+           xmlns:plone="http://namespaces.plone.org/plone">
 
   <adapter name="mollie_payment" factory=".MolliePayment" />
   
@@ -48,5 +50,35 @@
     class=".MolliePayFailed"
     permission="zope2.View"
   />
+
+  <browser:page
+      for="*"
+      name="ticket_summary"
+      class=".tickets.views.TicketView"
+      template="tickets/templates/eticket.pt"
+      permission="zope2.View"
+      layer="bda.plone.cart.interfaces.ICartExtensionLayer" 
+      zcml:condition="installed bda.plone.cart"/>
+
+  <browser:page
+      for="*"
+      name="etickets"
+      template="tickets/templates/tickets.pt"
+      permission="zope2.View"
+      layer="bda.plone.cart.interfaces.ICartExtensionLayer" 
+      zcml:condition="installed bda.plone.cart"/>
+
+  <plone:behavior
+    title="Tickets Behavior"
+    description="Includes specific fields for Tickets"
+    provides=".tickets.behaviors.ITicketsBehavior"
+    for="plone.dexterity.interfaces.IDexterityContent" />
+
+
+  <subscriber
+      for="bda.plone.molliepayment.mollie_payment.tickets.behaviors.ITicketsBehavior
+      zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+      handler=".tickets.behaviors.update_stock" />
+
 
 </configure>
