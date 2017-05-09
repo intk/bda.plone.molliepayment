@@ -10,7 +10,7 @@
     }
 
     #ticketBarcode > div:last-child {
-      margin-left: -25px !important;
+      margin-left: -70px !important;
     }
 
     #ticket-footer {
@@ -73,7 +73,7 @@
 
               
               <div class="cart_item summary_item" tal:condition="show">
-                <div id="ticketBarcode" class="ticket-barcode" tal:attributes="data-text barcode_text;" style="padding-top: 50px;margin:0 auto;">
+                <div id="ticketBarcode" class="ticket-barcode" tal:attributes="data-text barcode_text;" style="padding-top: 50px;margin:0 100px;">
               </div>
                 <table>
                   <tbody>

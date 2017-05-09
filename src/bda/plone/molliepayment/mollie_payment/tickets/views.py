@@ -116,7 +116,7 @@ class TicketView(CartView):
                     end_date = b_parent.end.date()
                     formatted_date = ""
                     if start_date == end_date:
-                        formatted_date = "%s, %s - %s" %(self.toLocalizedTime(b_parent.start.strftime('%d %B %Y')), self.toLocalizedTime(b_parent.start, time_only=1), self.toLocalizedTime(b_parent.end, time_only=1))
+                        formatted_date = "%s, %s" %(self.toLocalizedTime(b_parent.start.strftime('%d %B %Y')), self.toLocalizedTime(b_parent.start, time_only=1))
                     else:
                         formatted_date = "%s - %s" %(self.toLocalizedTime(b_parent.start.strftime('%d %B %Y')), self.toLocalizedTime(b_parent.end.strftime('%d %B %Y')))
                     tickets["event_date"] = formatted_date
@@ -156,8 +156,13 @@ class TicketView(CartView):
 
                 total_items += booking.attrs['buyable_count']
 
+                try:
+                    ticket_tite = booking.attrs['title'].split('-')[0]+")"
+                except:
+                    ticket_tite = booking.attrs['title']
+                    
                 tickets['tickets'].append({
-                  "cart_item_title": booking.attrs['title'],
+                  "cart_item_title": ticket_tite,
                   "cart_item_price": ascur(price_total),
                   "cart_item_count": len(booking.attrs['to_redeem']),
                   "booking_uid": booking.attrs['uid'],
