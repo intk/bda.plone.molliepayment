@@ -4,13 +4,7 @@
 from Acquisition import aq_inner, aq_parent
 from plone.app.uuid.utils import uuidToObject, uuidToCatalogBrain
 from bda.plone.cart.browser import CartView
-from bda.plone.orders.browser.views import OrderView, OrdersViewBase, OrdersView
-from bda.plone.orders.browser.views import OrdersTable
-from bda.plone.orders.browser.views import OrdersData
-from bda.plone.orders.browser.views import TableData
-from bda.plone.orders.browser.views import vendors_form_vocab
-from bda.plone.orders.browser.views import customers_form_vocab
-from bda.plone.orders.browser.views import Translate
+
 from bda.plone.orders.common import OrderData
 from bda.plone.orders.common import get_bookings_soup
 from bda.plone.orders.common import get_order
@@ -44,6 +38,8 @@ from Products.CMFCore.utils import getToolByName
 from plone.app.layout.navigation.interfaces import INavigationRoot
 from Products.CMFCore.interfaces import ISiteRoot
 
+from zope.component import getMultiAdapter
+
 import json
 
 DT_FORMAT = '%d.%m.%Y'
@@ -68,14 +64,25 @@ class TicketView(CartView):
                                     context=context, domain='plonelocales',
                                     request=self.request)
 
+    def get_language(self):
+        """
+        @return: Two-letter string, the active language code
+        """
+        context = self.context.aq_inner
+        portal_state = getMultiAdapter((context, self.request), name=u'plone_portal_state')
+        current_language = portal_state.language()
+        return current_language
+
     def get_etickets(self, order_id):
         tickets = {
           "tickets": [],
           "customer": "",
-          "total_tickets": 0
+          "total_tickets": 0,
+          "event_date":""
         }
 
-        
+        language = self.get_language()
+
         try:
             data = OrderData(self.context, uid=order_id)
             bookings = data.bookings
@@ -121,7 +128,7 @@ class TicketView(CartView):
                         formatted_date = "%s - %s" %(self.toLocalizedTime(b_parent.start.strftime('%d %B %Y')), self.toLocalizedTime(b_parent.end.strftime('%d %B %Y')))
                     tickets["event_date"] = formatted_date
 
-                    contents = self.context.portal_catalog(portal_type="Document", Title="ticket-info", path={"query": "/Plone/nl/tickets/texts"})
+                    contents = self.context.portal_catalog(portal_type="Document", Title="ticket-info", path={"query": "/zm/%s/tickets/texts" %(language)})
 
                     if len(contents) > 0:
                         ticket_info_brain = contents[0]
@@ -133,7 +140,7 @@ class TicketView(CartView):
 
 
             footer_info = ""
-            footer_texts = self.context.portal_catalog(portal_type="Document", Title="footer-info", path={"query": "/Plone/nl/tickets/texts"})
+            footer_texts = self.context.portal_catalog(portal_type="Document", Title="footer-info", path={"query": "/zm/%s/tickets/texts"%(language)})
             if len(footer_texts) > 0:
                 footer_info_brain = footer_texts[0]
                 footer_info_obj = footer_info_brain.getObject()
@@ -141,42 +148,75 @@ class TicketView(CartView):
                     footer_info = footer_info_obj.text
             else:
                 footer_info = ""
+
+            if not ticket_info:
+                info_texts = self.context.portal_catalog(portal_type="Document", Title="ticket-info", path={"query": "/zm/%s/tickets/texts" %(language)})
+                if len(info_texts) > 0:
+                    info_brain = info_texts[0]
+                    info_obj = info_brain.getObject()
+                    if hasattr(info_obj, "text"):
+                        ticket_info = info_obj.text
+                else:
+                    ticket_info = ""
             
+            timeslot_title = ""
+
             for booking in bookings:
                 # Check if booking is an event
                 is_event = False
+                append = True
+
                 buyable_uid = booking.attrs['buyable_uid']
                 b_brain = uuidToCatalogBrain(buyable_uid)
 
                 if "event" in b_brain.Subject or b_brain.portal_type in ['Ticket', 'Ticket Occurrence']:
                     is_event = True
+                    append = False
 
-                original_price = (Decimal(str(booking.attrs['net']))) * 1
+
+                if booking.attrs.get('discount_net', '') > 0:
+                    original_price = (abs(Decimal(str(booking.attrs['net'])) - Decimal(str(booking.attrs['discount_net'])))) * 1
+                else:
+                    original_price = (Decimal(str(booking.attrs['net']))) * 1
+
+
                 price_total = original_price + original_price / Decimal(100) * Decimal(str(booking.attrs['vat']))
 
-                total_items += booking.attrs['buyable_count']
+                if append:
+                    total_items += booking.attrs['buyable_count']
 
-                try:
-                    ticket_tite = booking.attrs['title'].split('-')[0]+")"
-                except:
-                    ticket_tite = booking.attrs['title']
-                    
-                tickets['tickets'].append({
-                  "cart_item_title": ticket_tite,
-                  "cart_item_price": ascur(price_total),
-                  "cart_item_count": len(booking.attrs['to_redeem']),
-                  "booking_uid": booking.attrs['uid'],
-                  "cart_item_original_price": "",
-                  "order_created_date": created_date,
-                  "to_redeem": booking.attrs['to_redeem'],
-                  "is_event": is_event,
-                  "ticket_info": ticket_info,
-                  "footer_info": footer_info
-                })
+                ticket_title = booking.attrs['title']
+                
+                if is_event:
+                    timeslot_title = ticket_title
+
+                    try:
+                        ticket_title = booking.attrs['title'].split('-')[0]+")"
+                        if not timeslot_title:
+                            timeslot_title = ticket_title
+                    except:
+                        ticket_title = booking.attrs['title']
+                        if not timeslot_title:
+                            timeslot_title = ticket_title
+                
+                if append:
+                    tickets['tickets'].append({
+                      "cart_item_title": ticket_title,
+                      "cart_item_price": ascur(price_total),
+                      "timeslot_title": timeslot_title,
+                      "cart_item_count": len(booking.attrs['to_redeem']),
+                      "booking_uid": booking.attrs['uid'],
+                      "cart_item_original_price": "",
+                      "order_created_date": created_date,
+                      "to_redeem": booking.attrs['to_redeem'],
+                      "is_event": is_event,
+                      "ticket_info": ticket_info,
+                      "footer_info": footer_info
+                    })
 
                 tickets["total_tickets"] = total_items
+                tickets["timeslot_title"] = timeslot_title
         except:
-            raise
             return tickets
         
         return tickets

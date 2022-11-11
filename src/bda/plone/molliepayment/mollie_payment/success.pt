@@ -55,22 +55,6 @@
           <div class="download-btn">
             
           </div>
-
-          <!--<div id="sponsors-wrapper">
-            <div class="row">
-              <div class="col-xs-3"><img src="/Plone/nl/tickets/logos/1-bgl-logo.jpg"/></div>
-              <div class="col-xs-3"><img src="/Plone/nl/tickets/logos/2-ministerie-cultuur.png"/></div>
-              <div class="col-xs-3"><img src="/Plone/nl/tickets/logos/3-rijksdienst.png"/></div>
-              <div class="col-xs-3"><img src="/Plone/nl/tickets/logos/4-noord-holland.jpg"/></div>
-            </div>
-            <div class="row">
-              <div class="col-xs-3"><img src="/Plone/nl/tickets/logos/5-gemeente-haarlem.jpg"/></div>
-              <div class="col-xs-3"></div>
-              <div class="col-xs-3"></div>
-              <div class="col-xs-3"></div>
-              <div class="col-xs-3"></div>
-            </div>
-          </div>-->
         </div>
 
         <div id="order-data" style="display:none">
@@ -98,6 +82,7 @@
 
               var order_bookings = $.parseJSON($('#order_bookings').attr('data-bookings'));
 
+              //console.log("[E-commerce] Transaction complete.")
               dataLayer.push({
                 'event': 'transactionComplete',
                 'ecommerce': {

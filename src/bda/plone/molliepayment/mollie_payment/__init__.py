@@ -21,12 +21,12 @@ from bda.plone.orders import interfaces as ifaces
 from bda.plone.orders.common import OrderData
 from bda.plone.orders.common import get_order
 import transaction
-#from collective.sendaspdf.browser.base import BaseView
-#from collective.sendaspdf.browser.send import SendForm
 from bda.plone.orders.common import get_bookings_soup
 from zope.component.hooks import getSite
 from bda.plone.cart import get_object_by_uid
 from plone import api
+
+from zope.component import getMultiAdapter
 
 from bda.plone.payment import (
     Payment,
@@ -35,9 +35,6 @@ from bda.plone.payment import (
 
 from ZTUtils import make_query
 from bda.plone.orders.common import get_order
-#from security import easyidealSignature
-#from easyideal import EasyIdeal
-#from easyideal import ReturnValidator
 from decimal import Decimal as D
 
 import json
@@ -58,13 +55,15 @@ from plone.app.uuid.utils import uuidToCatalogBrain
 testing = True
 
 # TODO: get keys from a settings interface
-TEST_API_KEY = "test_aUZkTbRsiUcDnjSX4D7AqvxTp5TKJP"
-LIVE_API_KEY = "live_BndGVkfjTnHuijrMPeKjnpGgV4rL7n"
+#TEST_API_KEY = "test_ktHwAH8wFVfvasS2J4deey6BHnAvap"
+
+TEST_API_KEY = "test_tcSMfAcFVWvCKHaVS2RWj7k7Bk7sFe"
+LIVE_API_KEY = "live_hTM4TennryeSMuhbRb23xPVhGsAwcU"
 
 # Switch keys
 API_KEY = LIVE_API_KEY
 if testing:
-    API_KEY = TEST_API_KEY
+    API_KEY = LIVE_API_KEY
 #
 # Util functions
 #
@@ -73,7 +72,7 @@ def shopmaster_mail(context):
         props = getToolByName(context, 'portal_properties')
         return props.site_properties.email_from_address
     except:
-        return "info@teylersmuseum.nl"
+        return "info@zeeuwsmuseum.nl"
 
 def get_banks():
     mollie = Mollie.API.Client()
@@ -99,42 +98,56 @@ class MolliePayment(Payment):
 # Mollie implementation
 #
 class MolliePay(BrowserView):
+
+    def get_language(self):
+        """
+        @return: Two-letter string, the active language code
+        """
+        context = self.context.aq_inner
+        portal_state = getMultiAdapter((context, self.request), name=u'plone_portal_state')
+        current_language = portal_state.language()
+        return current_language
+
     def __call__(self):
-
-        # Detect tickets interface
-        # TODO: Detect if tickets for an Event
         context_url = self.context.absolute_url()
+        
+        # Detect tickets interface
         tickets = is_context_ticket(self.context)
-
-        # Details
         base_url = self.context.absolute_url()
         order_uid = self.request['uid']
-        bank_id = self.request['bank_id']
-        payment_type = self.request['payment']
-
-        data = IPaymentData(self.context).data(order_uid)
-        amount = data["amount"]
-        ordernumber = data["ordernumber"]
-        
-        real_amount = float(int(amount)/100.0)
-
-        site_url = api.portal.get().absolute_url()
-        if tickets:
-            language = self.context.language
-            webhookUrl = '%s/%s/tickets/@@mollie_webhook' %(site_url, language)
-        else:
-            webhookUrl = '%s/@@mollie_webhook' %(site_url)
-
-        #if testing:
-        #    #webhookUrl = webhookUrl
 
         try:
+            bank_id = self.request['bank_id']
+            payment_type = self.request['payment']
+
+            data = IPaymentData(self.context).data(order_uid)
+            amount = data["amount"]
+            ordernumber = data["ordernumber"]
+            
+            real_amount = float(int(amount)/100.0)
+
+            site_url = api.portal.get().absolute_url()
+            if tickets:
+                language = self.get_language()
+                if language:
+                    webhookUrl = '%s/%s/tickets/@@mollie_webhook' %(site_url, language)
+                else:
+                    webhookUrl = '%s/nl/tickets/@@mollie_webhook' %(site_url)
+            else:
+                webhookUrl = '%s/@@mollie_webhook' %(site_url)
+
             mollie = Mollie.API.Client()
             mollie.setApiKey(API_KEY)
 
             order_redirect_url = '%s/@@mollie_payment_success?order_id=%s' %(base_url, ordernumber)
 
-            if payment_type == 'creditcard':
+            if payment_type in ['creditcard', 'bancontact', 'giropay', 'applepay']:
+                if payment_type == "bancontact":
+                    payment_type = "mistercash"
+                
+                if payment_type == "applepay":
+                    payment_type = None
+
                 payment = mollie.payments.create({
                     'amount':real_amount, 
                     'description':str(ordernumber), 
@@ -144,7 +157,6 @@ class MolliePay(BrowserView):
                     'method': payment_type
                 })
             else:
-                # iDeal
                 payment = mollie.payments.create({
                     'amount':real_amount, 
                     'description':str(ordernumber), 
@@ -166,7 +178,15 @@ class MolliePay(BrowserView):
 # Payment success
 #
 class MolliePaySuccess(BrowserView):
-    
+    def get_language(self):
+        """
+        @return: Two-letter string, the active language code
+        """
+        context = self.context.aq_inner
+        portal_state = getMultiAdapter((context, self.request), name=u'plone_portal_state')
+        current_language = portal_state.language()
+        return current_language
+
     def shopmaster_mail(self):
         return shopmaster_mail(self.context)
 
@@ -298,10 +318,10 @@ class MolliePaySuccess(BrowserView):
                 order_data['bookings'] = json.dumps([])
 
             # Generate download link
-            # TODO: Download link is deprecated. It is now crated when the ticket PDF is going to be generated bda.plone.orders
+            # TODO: Download link is deprecated. It is now created when the ticket PDF is going to be generated in bda.plone.orders
             if tickets:
                 base_url = self.context.portal_url()
-                language = self.context.language
+                language = self.get_language()
                 params = "?order_id=%s" %(str(order_uid))
                 download_as_pdf_link = "%s/%s/download_as_pdf?page_url=%s/%s/tickets/etickets%s" %(base_url, language, base_url, language, params)
                 order_data['download_link'] = download_as_pdf_link
@@ -341,7 +361,6 @@ class MolliePaySuccess(BrowserView):
             }
 
             return order_data
-
     
  
 
@@ -392,6 +411,7 @@ class MollieWebhook(BrowserView):
         elif mollie_payment.isOpen():
             return False
         else:
+            print "payment failed"
             # Payment Fails
             payment.failed(self.context, order_uid)
             return False

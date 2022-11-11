@@ -1,4 +1,5 @@
 
+
 <div id="cart"
      i18n:domain="bda.plone.cart"
      tal:define="currency view/currency;
@@ -9,9 +10,14 @@
       height: 99%;
     }
 
-    #ticketBarcode > div:last-child {
-      margin-left: -70px !important;
+    .ticket-item.is_event #ticketBarcode > div:last-child {
+      margin-left: 0px !important;
     }
+
+    .ticket-item:not(.is_event) #ticketBarcode > div:last-child {
+      margin-left: -19px !important;
+    }
+
 
     #ticket-footer {
       
@@ -22,7 +28,36 @@
     }
 
     body.template-etickets .ticket-item:not(:last-child) {
-      padding-bottom: 75px !important;
+      padding-bottom: 32px !important;
+    }
+
+    .ticket-item.is_event #ticketBarcode {
+      margin:0 100px;
+    }
+
+    .ticket-item:not(.is_event) #ticketBarcode {
+      margin:0;
+    }
+
+    .ajax-message, footer, .title-container, .cd-nav-trigger, #portal-logo, .intro-header, #ajax-spinner {
+      display: none !important;
+    }
+
+    .page-container {
+      padding-top: 0px !important;
+    }
+
+    #ticketBarcode {
+      padding-left: 20px !important;
+    }
+
+    article#content {
+      margin-bottom: 0px !important;
+    }
+
+    a {
+      color: #666666 !important;
+      text-decoration: underline !important;
     }
 
   </style>
@@ -30,7 +65,8 @@
   <tal:cart
     tal:define="orders python: view.get_etickets(order_id);
                 total_tickets python: orders['total_tickets'];
-                event_date python: orders['event_date'];
+                timeslot_title python: orders.get('timeslot_title', '');
+                event_date python: orders.get('event_date', '');
                 global counter python: 0;">
 
     <tal:entry tal:repeat="order python: orders['tickets']"
@@ -52,17 +88,9 @@
 
         <tal:count tal:repeat="item python:range(count)">
 
-          <div class="ticket-item" style="padding-bottom: 0px;">
+          <div class="ticket-item" style="padding-bottom: 0px;" tal:attributes="class python: 'ticket-item is_event' if is_event else 'ticket-item'">
             <div id="ticket-header" class="ticket-header">
-                <div class="logo-container" style="text-align: right;">
-                  <img class="logo" src="logos/teylers-logo-lood.png"/>
-                </div>
-                <div class="tickets-title">
-                  <h1 tal:condition="not:is_event">E-Ticket</h1>
-                  <h1 tal:condition="is_event" i18n:translate="ticket_reservation">Reserveringsbewijs</h1>
-                </div>
-                <p class="title-aux" i18n:translate="ticket_entrance" tal:condition="not:is_event">Entreebewijs</p>
-		            <p class="title-aux" i18n:translate="ticket_event_lorentz" tal:condition="is_event">De Lorentz Formule</p>
+                <img src="logos/etickets-header.jpg"/>
             </div>
 
             <tal:block
@@ -73,7 +101,7 @@
 
               
               <div class="cart_item summary_item" tal:condition="show">
-                <div id="ticketBarcode" class="ticket-barcode" tal:attributes="data-text barcode_text;" style="padding-top: 50px;margin:0 100px;">
+                <div id="ticketBarcode" class="ticket-barcode" tal:attributes="data-text barcode_text;" style="padding-top: 50px;">
               </div>
                 <table>
                   <tbody>
@@ -81,28 +109,14 @@
                       <td><h3 i18n:translate="type_ticket">Type ticket</h3></td><td><span tal:content="title" class="ticket-title"></span></td>
                       <td rowspan="5" class="ticket-info" tal:define="qr_code python: view.get_qr_code(booking_uid_count)" style="vertical-align: top; padding-top: 14px;">
                         <div class="info-div">
-                          <tal:no_ticket_info tal:condition="not:is_event">
-                            <p i18n:translate="info_0" tal:condition="not:is_event">Dit ticket is geldig tijdens de tentoonstelling Watteau: van 1 februari t/m 14 mei 2017.</p>
-                            <p i18n:translate="info_1">Dit ticket is niet inwisselbaar voor geld en wordt gescand bij de Entree.</p>
-                            <p i18n:translate="info_2">De algemene bezoekersvoorwaarden zijn van toepassing op deze reservering. Zie: www.teylersmuseum.nl.</p>
-                            <p i18n:translate="info_3" tal:condition="not:is_event">Voor bijzondere tentoonstellingen kan het zijn dat Teylers Museum een kleine toeslag vraagt om de kosten van de tentoonstelling te dekken. Deze toeslag is niet verrekend in dit e-ticket en kunt u aan de kassa in het museum betalen. De meeste tentoonstellingen kunt u zonder toeslag bezoeken. Een eventuele kleine toeslag wordt altijd duidelijk vermeld op de website in het prijzenoverzicht.</p>
-                            <p i18n:translate="info_4" tal:condition="is_event">Voor bijzondere tentoonstellingen kan het zijn dat Teylers Museum een kleine toeslag vraagt om de kosten van de tentoonstelling te dekken. Deze toeslag is niet verrekend in dit e-ticket en kunt u aan de kassa in het museum betalen. De meeste tentoonstellingen kunt u zonder toeslag bezoeken. Een eventuele kleine toeslag wordt altijd duidelijk vermeld op de website in het prijzenoverzicht.</p>
-                          </tal:no_ticket_info>
-                          <tal:event_info tal:condition="is_event">
                             <tal:ticket_info tal:condition="ticket_info">
                               <p tal:content="structure python: ticket_info.output_relative_to(context.view)"></p>
                             </tal:ticket_info>
-                            <ul tal:condition="not:ticket_info">
-                              <li i18n:translate="info_2_lorentz" tal:condition="python: getattr(context, 'language', 'en') != 'en'">Dit reserveringsbewijs is niet inwisselbaar voor geld en wordt gescand bij de kassa in het museum genoemde</li>
-                              <li i18n:translate="info_3_lorentz">Dit reserveringsbewijs is alleen geldig op de datum en het tijdstip dit ticket staat vermeld</li>
-                              <li i18n:translate="info_4_lorentz">De algemene bezoekersvoorwaarden zijn van toepassing op deze reservering. Zie: www.teylersmuseum.nl</li>
-                              <li i18n:translate="info_5_lorentz">Vragen? We helpen graag via info@teylersmuseum.nl</li>
-                              <li tal:condition="python: getattr(context, 'language', 'en') == 'en'">
-                              For questions, please consult info@teylersmuseum.nl</li>
-                            </ul>
-                          </tal:event_info>
                         </div>
                       </td>
+                    </tr>
+                    <tr>
+                      <td><h3 i18n:translate="timeslot">Tijdstip</h3></td><td><span tal:content="python: timeslot_title.replace('Tijdstip', '').replace('(', '').replace(')', '')" tal:on-error="timeslot_title">Tijdstip</span></td>
                     </tr>
                     <tr tal:condition="python:is_event">
                       <td><h3 i18n:translate="date">Datum</h3></td><td><span tal:content="event_date">Date</span></td>
@@ -115,7 +129,7 @@
                     </tr>
                     <tr>
                       <td><h3 i18n:translate="ticketnumber">Ticketnummer</h3></td>
-                      <td><h3><span tal:content="python: '%s/%s' %(counter, total_tickets)">1/2</span></h3></td>
+                      <td><span tal:content="python: '%s/%s' %(counter, total_tickets)">1/2</span></td>
                     </tr>
                     <tr tal:condition="python: not is_event">
                       <td><h3 i18n:translate="purchase_date">Aankoopdatum</h3></td><td><span tal:content="created_date">07/03/2016</span></td>
@@ -124,53 +138,11 @@
                 </table>
 
                 <div id="ticket-footer" class="ticket-footer">
-                    <tal:event_footer tal:condition="python: footer_info == '' or is_event == False">
-                      <div>
-                        <h4 i18n:translate="address">Bezoekadres</h4>
-                        <p i18n:translate="">Teylers Museum, Spaarne 16, 2011 CH HAARLEM. 023-5160960 (<span i18n:translate="address_times">za-zo 10:30 - 16:00 uur</span>)</p>
-                      </div>
-                      
-                      <tal:event_footer tal:condition="is_event">
-                        <div>
-                          <h4 i18n:translate="opening_hours_lorentz_header">Handig om te weten</h4>
-                          <ul>
-                            <li i18n:translate="opening_1_lorentz">Hartelijk dank voor je reservering. Op vertoon van dit reserveringsbewijs aan de kassa van Teylers Museum ontvangt je je definitieve deelnamebewijs voor <span class="lorentz-formule">De Lorentz Formule.<span></li>
-                            <li i18n:translate="opening_3_lorentz">Het deelnamebewijs voor <span class="lorentz-formule">De Lorentz Formule</span> is geen toegangsbewijs voor het museum. U kunt een toegangsbewijs online kopen of op de dag zelf aan de kassa. Houdt u in dat laatste geval s.v.p. rekening met wachttijd.</li>
-                            <li i18n:translate="opening_2_lorentz">Wij adviseren om ruim op tijd aanwezig te bij de kassa zijn, minstens 15 minuten voor aanvang. Na aanvang kunt u helaas niet meer aansluiten. Er wordt geen restitutie op de reserveringskosten verleend.</li>
-                            <li i18n:translate="opening_4_lorentz">Openingstijden van het museum; dinsdag t/m vrijdag: 10.00 - 17.00 uur. Zaterdag, zondag, feestdag: 11.00 -17.00 uur. Kijk voor actuele openingstijden op onze website.</li>
-                          </ul>
-                        </div>
-                        <div class="accessibility">
-                          <h4 i18n:translate="accessibility_header_lorentz">Bereikbaarheid en toegankelijkheid</h4>
-                          <ul>
-                            <li i18n:translate="accessibility_1_lorentz">Teylers Museum is goed te bereiken met de auto. U kunt parkeren in de nabijgelegen parkeergarage de Appelaar. Vanaf Centraal Station Haarlem is het 10 minuten lopen naar het museum.</li>
-                            <li i18n:translate="accessibility_2_lorentz">Het Lorentz Lab is een historisch gebouw dat grotendeels in zijn oorspronkelijke staat is hersteld. Hierbij is zo goed mogelijk rekening gehouden met de toegankelijkheid voor onze bezoekers.</li>
-                          </ul>
-      		              </div>
-                      </tal:event_footer>
-
-                      <tal:not_event_footer tal:condition="not:is_event">
-                        <div>
-                          <h4 i18n:translate="opening_hours">Openingstijden</h4>
-                          <p>
-                            <span i18n:translate="opening_hours_details">Dinsdag t/m vrijdag: 10.00 - 17.00 uur. Zaterdag, zondag, feestdag: 11.00 - 17.00 uur. Let op onze aangepaste openingstijden tijdens feestdagen. Kijk voor actuele openingstijden op:</span>
-                            <span>http://www.teylersmuseum.nl/nl/bezoek-het-museum/praktische-informatie/openingstijden-en-prijzen.</span>
-                          </p>
-                        </div>
-                        <div class="accessibility">
-                          <h4 i18n:translate="accessibility_header">Bereikbaarheid en toegankelijkheid</h4>
-                          <p i18n:translate="accessibility_text" tal:condition="not:is_event">Teylers Museum is goed te bereiken met de auto. Je kunt parkeren in de nabijgelegen parkeergarage De Appelaar. Vanaf het Centraal Station Haarlem loop je in ongeveer 10 minuten naar het museum (via de Jansweg, linksaf de Korte Jansstraat in, rechtsaf de Bakenessergracht aflopen tot aan het einde van de straat, bij het Spaarne rechtsaf. Teylers Museum vind je aan je rechterhand).</p>
-                        </div>
-                      </tal:not_event_footer>
-                    </tal:event_footer>
-                    <tal:event_footer_info tal:condition="python: footer_info != '' and is_event == True">
+                    <tal:event_footer_info tal:condition="python: footer_info != ''">
                        <div tal:content="structure python: footer_info.output_relative_to(context.view)"></div>
                     </tal:event_footer_info>
                 </div>
-                <div id="logos-wrapper">
-                  <img src="logos/logos-tickets.png"/>
-                </div>
-
+                
                 <div class="clearfix"></div>
               </div>
             </tal:block>
