@@ -27,7 +27,7 @@
         
         <div id="cart-page-header" tal:attributes="style python: 'background-image:url(%s)' %(header_image)">
           <h1 class="documentFirstHeading"
-              i18n:translate="payment_success">Bestelling is succesvol afgerond</h1>
+              i18n:translate="payment_success">Bedankt voor je bestelling</h1>
         </div>
         
         <div class="results-wrapper">
