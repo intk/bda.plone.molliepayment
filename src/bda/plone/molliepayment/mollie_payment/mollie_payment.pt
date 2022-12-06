@@ -88,6 +88,20 @@
                     }
                   }
                 });
+
+                // Analytics 4 implementation
+                dataLayer.push({ ecommerce: null });  // Clear the previous ecommerce object.
+                dataLayer.push({
+                  event: "purchase",
+                  ecommerce: {
+                      transaction_id: order_id,
+                      value: order_total,
+                      tax: order_tax,
+                      shipping: order_shipping,
+                      currency: "EUR",
+                      items: order_bookings
+                  }
+                });
               });
             </script>
           </tal:send_ga>
