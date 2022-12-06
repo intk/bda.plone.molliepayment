@@ -13,23 +13,18 @@ from bda.plone.shop.interfaces import IShopSettingsProvider
 @provider(IShopSettingsProvider)
 class IMolliePaymentSettings(model.Schema):
     
-    model.fieldset( 'mollie',label=_(u'mollie', default=u'mollie'),
+    model.fieldset('Mollie',label=_(u'Mollie', default=u'Mollie'),
         fields=[
-        'mollie_server_url',
-        'mollie_sha_in_password',
-        'mollie_sha_out_password',
+        'test_api',
+        'live_api',
         ],
     )
                    
-    mollie_server_url = schema.ASCIILine(title=_(u'mollie_server_url', default=u'Server url'),
+    test_api = schema.ASCIILine(title=_(u'test_api', default=u'Test API key'),
                  required=True
     )
 
-    mollie_sha_in_password = schema.ASCIILine(title=_(u'mollie_sha_in_password', default=u'SHA in password'),
-               required=True
-    )
-    
-    mollie_sha_out_password = schema.ASCIILine(title=_(u'mollie_sha_out_password', default=u'SHA out password'),
+    live_api = schema.ASCIILine(title=_(u'live_api', default=u'Live API key'),
                required=True
     )
     

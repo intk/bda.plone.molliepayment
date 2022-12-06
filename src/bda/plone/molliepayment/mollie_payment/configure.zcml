@@ -21,64 +21,21 @@
 
   <browser:page
     for="*"
-    name="mollie_payment_finalized"
-    template="finalized.pt"
-    class=".MolliePayFinalized"
+    name="payment"
+    template="mollie_payment.pt"
+    class=".MolliePayRedirect"
     permission="zope2.View"
   />
 
   <browser:page
-    for="*"
-    name="mollie_payment_success"
-    template="success.pt"
-    class=".MolliePaySuccess"
-    permission="zope2.View"
-  />
-  
-  <browser:page
-    for="*"
-    name="mollie_payment_failed"
-    template="failed.pt"
-    class=".MolliePayFailed"
-    permission="zope2.View"
-  />
-
-  <browser:page
-    for="*"
-    name="mollie_payment_aborted"
-    template="aborted.pt"
-    class=".MolliePayFailed"
-    permission="zope2.View"
-  />
-
-  <browser:page
-      for="*"
-      name="ticket_summary"
-      class=".tickets.views.TicketView"
-      template="tickets/templates/eticket.pt"
-      permission="zope2.View"
-      layer="bda.plone.cart.interfaces.ICartExtensionLayer" 
-      zcml:condition="installed bda.plone.cart"/>
-
-  <browser:page
-      for="*"
-      name="etickets"
-      template="tickets/templates/tickets.pt"
-      permission="zope2.View"
-      layer="bda.plone.cart.interfaces.ICartExtensionLayer" 
-      zcml:condition="installed bda.plone.cart"/>
-
-  <plone:behavior
-    title="Tickets Behavior"
-    description="Includes specific fields for Tickets"
-    provides=".tickets.behaviors.ITicketsBehavior"
-    for="plone.dexterity.interfaces.IDexterityContent" />
-
+        name="process_shipments"
+        for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+        class=".xmlparser.ShipmentsView"
+        permission="cmf.ManagePortal"
+    />
 
   <subscriber
-      for="bda.plone.molliepayment.mollie_payment.tickets.behaviors.ITicketsBehavior
-      zope.lifecycleevent.interfaces.IObjectModifiedEvent"
-      handler=".tickets.behaviors.update_stock" />
-
+    for="bda.plone.payment.interfaces.IPaymentSuccessEvent"
+    handler=".create_order_xml" />
 
 </configure>

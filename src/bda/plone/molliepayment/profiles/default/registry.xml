@@ -2,9 +2,8 @@
 <registry>
 
   <records interface="bda.plone.molliepayment.IMolliePaymentSettings">
-    <value key="mollie_server_url" purge="false"></value>
-    <value key="mollie_sha_in_password" purge="false">SHAin</value>
-    <value key="mollie_sha_out_password" purge="false">SHAout</value>
+    <value key="test_api" purge="false">test_api</value>
+    <value key="live_api" purge="false">live_api</value>
   </records>
 
 </registry>
