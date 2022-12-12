@@ -32,6 +32,7 @@ class OrderXMLGenerator():
         general_fields['payment_method'] = payment_method
         general_fields['is_paid'] = is_paid
         general_fields['order_number'] = order_number
+        general_fields['gift_comment'] = self.order_attrs.get('order_comment.gift_comment', '')
         
         return general_fields
 
